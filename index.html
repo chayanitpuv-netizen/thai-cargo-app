@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="format-detection" content="telephone=no">
+  <title>THAI Cargo Domestic - BANGKOK DOMESTIC TERMINAL</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Prompt:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #F5F6FA;
+      color: #1E293B;
+    }
+    .font-prompt { font-family: 'Prompt', sans-serif; }
+    .font-thai-serif { font-family: 'Cinzel', 'Times New Roman', Georgia, serif; }
+
+    /* 1. แถบด้านบนสุดสีชมพูบานเย็น (#D81B8A) */
+    .magenta-bar {
+      background-color: #D81B8A;
+      color: #FFFFFF;
+    }
+
+    /* 2. แถบเมนูแคปซูลสีม่วงเข้มโค้งมนลอยทับขอบแบนเนอร์ */
+    .purple-capsule {
+      background-color: #3B0054;
+      box-shadow: 0 10px 25px rgba(59, 0, 84, 0.28);
+    }
+
+    /* 3. แบนเนอร์ใหญ่โค้งล่าง พร้อมรูปอาคารคลังสินค้าจาก Google Drive */
+    .hero-curved {
+      background-color: #210657;
+      background-image:
+        linear-gradient(95deg, rgba(24, 5, 48, 0.85) 0%, rgba(45, 8, 78, 0.52) 52%, rgba(24, 5, 48, 0.16) 100%),
+        url('https://lh3.googleusercontent.com/d/1erxdV6AR_1Se4jdx49aS_4xTsYnErPM1=w1600');
+      background-size: cover;
+      background-position: center 42%;
+      border-bottom-left-radius: 50% 26px;
+      border-bottom-right-radius: 50% 26px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* การ์ดเที่ยวบิน */
+    .vcb-card {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-left: 5px solid #16A34A;
+      border-radius: 14px;
+      padding: 15px 18px;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .vcb-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(36, 0, 70, 0.08);
+    }
+    .vcb-card.is-alert {
+      border-left: 6px solid #F59E0B;
+      background-color: #FFFBEB;
+      border-color: #FCD34D;
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.16);
+    }
+    .vcb-card.is-closed {
+      border-left-color: #DC2626;
+      background-color: #FFFBFB;
+      border-color: #FECACA;
+    }
+
+    /* ปุ่มลอยเลื่อนขึ้นบนสุด (แสดงเมื่อเลื่อนเกิน 300px) */
+    #backToTopBtn {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(16px);
+      transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+    }
+    #backToTopBtn.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+  <!-- 1. แถบบนสุดสีชมพูบานเย็น (#D81B8A) -->
+  <div class="magenta-bar text-xs py-2 px-4">
+    <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="font-medium tracking-wide flex items-center gap-1.5">
+        <span>คลังสินค้าภายในประเทศ ท่าอากาศยานสุวรรณภูมิ (BKK)</span>
+      </div>
+      <div class="flex items-center gap-2.5 font-semibold">
+        <span id="liveDateTime">กำลังโหลดวันที่และเวลา...</span>
+        <span class="bg-white text-[#D81B8A] px-2.5 py-0.5 rounded-full font-bold text-[11px]">TH</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. แถบสีขาวโลโก้ THAI CARGO -->
+  <header class="bg-white pt-3.5 pb-8 px-4 relative z-20 border-b border-slate-100">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
+      <div onclick="switchTab('flights')" class="inline-flex items-center gap-3.5 cursor-pointer select-none" aria-label="THAI CARGO">
+        <svg class="w-14 h-14 sm:w-16 sm:h-16 shrink-0" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="goldBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FFE01B" />
+              <stop offset="50%" stop-color="#FFC700" />
+              <stop offset="100%" stop-color="#F5A600" />
+            </linearGradient>
+            <linearGradient id="magentaCenter" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#E6007E" />
+              <stop offset="100%" stop-color="#A8005B" />
+            </linearGradient>
+            <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+              <feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.18"/>
+            </filter>
+          </defs>
+          <g filter="url(#softShadow)">
+            <path d="M 12 60 C 25 48, 34 32, 50 32 C 60 32, 66 39, 73 43 C 71 38, 66 33, 66 24 C 66 10, 77 4, 89 4 C 103 4, 112 15, 112 31 C 112 45, 104 56, 94 60 C 104 64, 112 75, 112 89 C 112 105, 103 116, 89 116 C 77 116, 66 110, 66 96 C 66 87, 71 82, 73 77 C 66 81, 60 88, 50 88 C 34 88, 25 72, 12 60 Z" fill="url(#goldBorder)" />
+            <path d="M 20 60 C 31 50, 38 38, 51 38 C 62 38, 71 51, 84 51 C 92 51, 97 44, 97 36 C 97 29, 92 24, 86 24 C 80 24, 76 28, 76 34 C 76 36, 77 38, 78 39 C 74 37, 71 32, 71 25 C 71 15, 79 9, 89 9 C 100 9, 107 18, 107 31 C 107 46, 97 56, 84 56 C 69 56, 60 44, 50 44 C 41 44, 36 51, 36 60 C 36 69, 41 76, 50 76 C 60 76, 69 64, 84 64 C 97 64, 107 74, 107 89 C 107 102, 100 111, 89 111 C 79 111, 71 105, 71 95 C 71 88, 74 83, 78 81 C 77 82, 76 84, 76 86 C 76 92, 80 96, 86 96 C 92 96, 97 91, 97 84 C 97 76, 92 69, 84 69 C 71 69, 62 82, 51 82 C 38 82, 31 70, 20 60 Z" fill="#210657" />
+            <path d="M 41 60 C 41 52, 47 48, 53 48 C 59 48, 65 55, 72 60 C 65 65, 59 72, 53 72 C 47 72, 41 68, 41 60 Z" fill="url(#magentaCenter)" />
+          </g>
+        </svg>
+
+        <div class="flex flex-col justify-center leading-[1.02] text-[#210657] font-thai-serif">
+          <span class="text-[32px] sm:text-[36px] font-bold tracking-[2px]">THAI</span>
+          <span class="text-[27px] sm:text-[31px] font-semibold tracking-[3px] mt-0.5">CARGO</span>
+        </div>
+      </div>
+
+      <a href="https://www.thaicargo.com/th/main" target="_blank" rel="noopener noreferrer"
+        class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-[#3B0054] hover:text-[#D81B8A] border border-purple-200 bg-purple-50/60 px-3.5 py-2 rounded-full transition">
+        <span>เว็บไซต์หลัก THAI Cargo</span>
+        <span>↗</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- 3. แถบเมนูแคปซูลสีม่วงเข้ม (#3B0054) 5 ปุ่ม -->
+  <div class="max-w-5xl w-full mx-auto px-3 -mt-6 relative z-30">
+    <div class="purple-capsule rounded-full py-2 px-2 sm:px-5 grid grid-cols-5 gap-1">
+      <button onclick="switchTab('flights')" id="pill-flights" class="pill-nav-btn bg-white/20 text-white rounded-full py-2 px-1 flex flex-col items-center justify-center gap-1 transition cursor-pointer">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-amber-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+        </svg>
+        <span class="font-prompt text-[10px] sm:text-xs font-semibold text-center leading-tight">ตารางเที่ยวบิน</span>
+      </button>
+
+      <button onclick="switchTab('calculator')" id="pill-calculator" class="pill-nav-btn text-white/90 hover:bg-white/10 rounded-full py-2 px-1 flex flex-col items-center justify-center gap-1 transition cursor-pointer">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-amber-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+        </svg>
+        <span class="font-prompt text-[10px] sm:text-xs font-semibold text-center leading-tight">คำนวณค่าบริการ</span>
+      </button>
+
+      <button onclick="switchTab('guidelines')" id="pill-guidelines" class="pill-nav-btn text-white/90 hover:bg-white/10 rounded-full py-2 px-1 flex flex-col items-center justify-center gap-1 transition cursor-pointer">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-amber-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+        </svg>
+        <span class="font-prompt text-[10px] sm:text-xs font-semibold text-center leading-tight">เงื่อนไข / ขั้นตอน</span>
+      </button>
+
+      <button onclick="switchTab('inbound')" id="pill-inbound" class="pill-nav-btn text-white/90 hover:bg-white/10 rounded-full py-2 px-1 flex flex-col items-center justify-center gap-1 transition cursor-pointer">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-amber-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16v3a2 2 0 002 2h14a2 2 0 002-2v-3M7 10l5 5m0 0l5-5m-5 5V3"/>
+        </svg>
+        <span class="font-prompt text-[10px] sm:text-xs font-semibold text-center leading-tight">บริการรับสินค้า (ขาเข้า)</span>
+      </button>
+
+      <button onclick="switchTab('contact')" id="pill-contact" class="pill-nav-btn text-white/90 hover:bg-white/10 rounded-full py-2 px-1 flex flex-col items-center justify-center gap-1 transition cursor-pointer">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-amber-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+        </svg>
+        <span class="font-prompt text-[10px] sm:text-xs font-semibold text-center leading-tight">ติดต่อเรา / FAQ</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 4. แบนเนอร์ใหญ่โค้งล่าง -->
+  <section class="hero-curved -mt-7 pt-16 pb-14 px-4 text-white">
+    <div class="max-w-5xl mx-auto w-full relative z-10">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-1.5 bg-black/40 backdrop-blur-xs border border-white/25 text-amber-300 text-[11px] font-semibold px-3 py-1 rounded-full mb-2.5">
+          <span>THAI AIRWAYS CARGO</span>
+          <span>•</span>
+          <span>SUVARNABHUMI (BKK)</span>
+        </div>
+        <h1 class="font-prompt text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide drop-shadow-md uppercase">
+          BANGKOK DOMESTIC TERMINAL
+        </h1>
+        <p class="text-xs sm:text-base text-purple-100 mt-2 leading-relaxed drop-shadow">
+          บริการขนส่งสินค้าทางอากาศภายในประเทศ การบินไทย
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. พื้นที่เนื้อหาหลัก -->
+  <main class="max-w-5xl w-full mx-auto px-4 mt-5 flex-1">
+
+    <!-- ==================== แท็บ 1: ตารางเที่ยวบิน (หน้าแรกเริ่มต้น) ==================== -->
+    <section id="sec-flights" class="space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3.5">
+          <h2 class="font-prompt text-base sm:text-lg font-bold text-[#240046]">
+            ตารางและสถานะการรับฝากสินค้าภายในประเทศ
+          </h2>
+          <div class="flex items-center gap-2">
+            <a href="https://www.flightradar24.com/13.75,100.50/6" target="_blank" rel="noopener noreferrer"
+              class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-semibold px-3.5 py-2 rounded-full transition inline-flex items-center gap-1">
+              <span>เรดาร์เที่ยวบินสด</span>
+            </a>
+            <button onclick="loadData()" class="bg-[#3B0054] hover:bg-[#520a73] text-white text-xs font-semibold px-4 py-2 rounded-full transition cursor-pointer shadow-sm">
+              อัปเดตสถานะล่าสุด
+            </button>
+          </div>
+        </div>
+
+        <!-- ปุ่มเลือก 8 จังหวัดปลายทาง -->
+        <div class="space-y-1.5">
+          <div class="text-xs font-bold text-slate-700">เลือกจังหวัดปลายทาง:</div>
+          <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+            <button onclick="setDestFilter('ALL')" data-dest="ALL" class="dest-pill bg-[#3B0054] text-white border border-[#3B0054] px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition cursor-pointer">
+              ทั้งหมด
+            </button>
+            <button onclick="setDestFilter('CNX')" data-dest="CNX" class="dest-pill bg-slate-100 hover:bg-purple-50 text-slate-700 border border-slate-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition cursor-pointer">
+              เชียงใหม่ (CNX)
+            </button>
+            <button onclick="setDestFilter('CEI')" data-dest="CEI" class="dest-pill bg-slate-100 hover:bg-purple-50 text-slate-700 border border-slate-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition cursor-pointer">
+              เชียงราย (CEI)
+            </button>
+            <button onclick="setDestFilter('KKC')" data-dest="KKC" class="dest-pill bg-slate-100 hover:bg-purple-50 text-slate-700 border border-slate-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition cursor-pointer">
+              ขอนแก่น (KKC)
+            </button>
+            <button onclick="setDestFilter('UBP')" data-dest="UBP" class="dest-pill bg-slate-100 hover:bg-purple-50 text-slate-700 border border-slate-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition cursor-pointer">
+              อุบลฯ (UBP)
+            </button>
+            <button onclick="setDestFilter('UTH')" data-dest="UTH" class="dest-pill bg-slate-100 hover:bg-purple-50 text-slate-700 border border-slate-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition cursor-pointer">
+              อุดรฯ (UTH)
+            </button>
+            <button onclick="setDestFilter('HKT')" data-dest="HKT" class="dest-pill bg-slate-100 hover:bg-purple-50 text-slate-700 border border-slate-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition cursor-pointer">
+              ภูเก็ต (HKT)
+            </button>
+            <button onclick="setDestFilter('HDY')" data-dest="HDY" class="dest-pill bg-slate-100 hover:bg-purple-50 text-slate-700 border border-slate-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition cursor-pointer">
+              หาดใหญ่ (HDY)
+            </button>
+            <button onclick="setDestFilter('KBV')" data-dest="KBV" class="dest-pill bg-slate-100 hover:bg-purple-50 text-slate-700 border border-slate-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition cursor-pointer">
+              กระบี่ (KBV)
+            </button>
+          </div>
+        </div>
+
+        <!-- ช่องค้นหารหัสเที่ยวบิน -->
+        <div>
+          <input type="text" id="searchInput" onkeyup="filterFlights()" placeholder="ค้นหารหัสเที่ยวบิน เช่น TG100, TG203 หรือชื่อจังหวัด..."
+            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-800 focus:outline-none focus:border-[#3B0054]">
+        </div>
+
+        <!-- กล่องหมายเหตุ -->
+        <div class="bg-purple-50 border-l-4 border-[#D81B8A] rounded-r-xl p-3.5 text-xs sm:text-sm text-purple-950 space-y-1.5 leading-relaxed">
+          <div class="font-bold text-[#240046]">หมายเหตุสำคัญสำหรับผู้ใช้บริการ:</div>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>กรุณานำส่งสินค้าล่วงหน้า <strong>ก่อนเวลาเครื่องออกอย่างน้อย 2–3 ชั่วโมง</strong> เพื่อดำเนินการตรวจรับและชั่งน้ำหนัก</li>
+            <li id="noticeText">ตารางเที่ยวบินอาจมีการปรับเปลี่ยนตามความเหมาะสม และหากมีปริมาณสินค้าจำนวนมาก อาจปิดรับฝากก่อนกำหนด ขออภัยในความไม่สะดวก</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- การ์ดเที่ยวบิน 2 แถว (2 คอลัมน์) -->
+      <div id="flightContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        <div class="col-span-full bg-white rounded-xl border border-slate-200 p-10 text-center text-slate-500 text-sm">กำลังเชื่อมต่อฐานข้อมูลเที่ยวบิน...</div>
+      </div>
+    </section>
+
+    <!-- ==================== แท็บ 2: คำนวณค่าบริการ ==================== -->
+    <section id="sec-calculator" class="hidden space-y-5">
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+        <div class="border-b border-slate-100 pb-3">
+          <h2 class="font-prompt text-base sm:text-lg font-bold text-[#2E0057]">คำนวณอัตราค่าบริการขนส่งสินค้าเบื้องต้น</h2>
+          <p class="text-xs sm:text-sm text-[#D81B8A] font-medium mt-1">
+            หมายเหตุ: รับชำระเฉพาะ เงินสด และ บัตรเครดิต (เมื่อมียอดตั้งแต่ 500 บาทขึ้นไป)
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">1. จังหวัดปลายทาง</label>
+            <select id="calcDest" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:border-[#3B0054]">
+              <option value="CNX">เชียงใหม่ (CNX)</option>
+              <option value="CEI">เชียงราย (CEI)</option>
+              <option value="KKC">ขอนแก่น (KKC)</option>
+              <option value="UBP">อุบลราชธานี (UBP)</option>
+              <option value="UTH">อุดรธานี (UTH)</option>
+              <option value="HKT">ภูเก็ต (HKT)</option>
+              <option value="HDY">หาดใหญ่ (HDY)</option>
+              <option value="KBV">กระบี่ (KBV)</option>
+              <option value="URT">สุราษฎร์ธานี (URT)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">2. ประเภทสินค้า</label>
+            <select id="calcType" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:border-[#3B0054]">
+              <option value="GCR">สินค้าทั่วไป (เช่น พัสดุกล่อง เอกสาร เสื้อผ้า อะไหล่ อุปกรณ์ทั่วไป)</option>
+              <option value="PER">ของสด / ผลไม้ (เช่น อาหารทะเล ผลไม้ ผักสด ดอกไม้ อาหารแช่เย็น)</option>
+              <option value="AVI">สัตว์น้ำมีชีวิต (เช่น ปลาสวยงาม กุ้งสวยงาม พันธุ์ปลา)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 items-end">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">น้ำหนักจริง (กก.) *</label>
+            <input type="number" id="calcWeight" value="5" min="0.1" step="0.1" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#3B0054]">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">กว้าง (ซม.)</label>
+            <input type="number" id="calcW" placeholder="ไม่ใส่ก็ได้" min="0" oninput="syncVolumetricWeight()" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#3B0054]">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">ยาว (ซม.)</label>
+            <input type="number" id="calcL" placeholder="ไม่ใส่ก็ได้" min="0" oninput="syncVolumetricWeight()" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#3B0054]">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">สูง (ซม.)</label>
+            <input type="number" id="calcH" placeholder="ไม่ใส่ก็ได้" min="0" oninput="syncVolumetricWeight()" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#3B0054]">
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-bold text-[#3B0054] mb-1">น้ำหนักเปรียบเทียบ (กก.) *</label>
+            <input type="number" id="calcVolWeight" value="0" min="0" step="0.01" placeholder="0.00" class="w-full border-2 border-purple-300 bg-purple-50/40 rounded-lg px-3 py-2.5 text-sm font-semibold text-[#2E0057] focus:outline-none focus:border-[#D81B8A]">
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5">
+          <button type="button" onclick="toggleVolChart()" class="text-xs font-semibold text-[#3B0054] hover:text-[#D81B8A] underline cursor-pointer">
+            ดูตารางเปรียบเทียบน้ำหนัก (0.001 – 10.0)
+          </button>
+          <span class="text-[11px] text-slate-500">* หากกรอก กว้าง × ยาว × สูง ระบบจะคำนวณลงช่องน้ำหนักเปรียบเทียบให้อัตโนมัติ หรือพิมพ์ค่าเองได้</span>
+        </div>
+
+        <div id="volChartBox" class="hidden bg-white border border-slate-300 rounded-xl p-3 overflow-x-auto shadow-inner">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-[#2E0057]">ตารางเปรียบเทียบน้ำหนักปริมาตร (CBM) และน้ำหนักสินค้าจริง (ก.ก.)</span>
+            <button type="button" onclick="toggleVolChart()" class="text-xs text-slate-500 hover:text-slate-800 cursor-pointer">ปิด [✕]</button>
+          </div>
+          <table class="w-full text-[11px] sm:text-xs text-center border-collapse border border-slate-300">
+            <thead>
+              <tr class="bg-slate-200 text-slate-900 font-bold">
+                <th class="border border-slate-300 p-1.5">น้ำหนักเปรียบเทียบ (ก.ก.)</th>
+                <th class="border border-slate-300 p-1.5">น้ำหนักสินค้าจริง (ก.ก.)</th>
+                <th class="border border-slate-300 p-1.5">น้ำหนักเปรียบเทียบ (ก.ก.)</th>
+                <th class="border border-slate-300 p-1.5">น้ำหนักสินค้าจริง (ก.ก.)</th>
+                <th class="border border-slate-300 p-1.5">น้ำหนักเปรียบเทียบ (ก.ก.)</th>
+                <th class="border border-slate-300 p-1.5">น้ำหนักสินค้าจริง (ก.ก.)</th>
+              </tr>
+            </thead>
+            <tbody id="volChartBody"></tbody>
+          </table>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100">
+          <label class="inline-flex items-start sm:items-center gap-2.5 cursor-pointer select-none">
+            <input type="checkbox" id="calcWht" class="mt-0.5 sm:mt-0 w-4 h-4 accent-[#D81B8A] rounded cursor-pointer">
+            <span class="text-xs sm:text-sm text-slate-700">
+              <strong>หักภาษี ณ ที่จ่าย 1% (Withholding Tax 1%)</strong>
+              <span class="block sm:inline text-[11px] text-slate-500">(สำหรับนิติบุคคล/บริษัท คำนวณ 1% จากค่าระวางขนส่ง)</span>
+            </span>
+          </label>
+
+          <button type="button" onclick="calculateRate()"
+            class="bg-[#D81B8A] hover:bg-[#b81474] text-white font-prompt font-bold text-sm px-7 py-3 rounded-xl shadow-md transition cursor-pointer shrink-0">
+            Calculate (คำนวณค่าบริการ)
+          </button>
+        </div>
+
+        <div id="calcResult" class="bg-purple-50/70 border border-purple-200 rounded-xl p-4 space-y-2 text-sm"></div>
+
+        <p class="text-xs text-slate-500">
+          * วิธีคิดน้ำหนักเทียบปริมาตร: (กว้าง × ยาว × สูง ซม.) ÷ 6,000 เปรียบเทียบกับน้ำหนักจริง โดยใช้น้ำหนักที่มากกว่า (Chargeable Weight) ในการคำนวณ
+        </p>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+        <div class="border-b border-slate-100 pb-2.5">
+          <h3 class="font-prompt text-base font-bold text-[#2E0057]">ตารางอัตราค่าระวางขนส่งสินค้าภายในประเทศ (FROM BANGKOK - BKK)</h3>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-[11px] sm:text-xs text-center border-collapse border border-slate-300">
+            <thead>
+              <tr class="bg-[#210657] text-white">
+                <th rowspan="2" class="border border-slate-400 p-2 text-left">ปลายทาง (TO)</th>
+                <th rowspan="2" class="border border-slate-400 p-2">รหัส</th>
+                <th colspan="3" class="border border-slate-400 p-1.5 bg-[#3B0054]">GCR (ทั่วไป)</th>
+                <th colspan="4" class="border border-slate-400 p-1.5 bg-emerald-800">PERISHABLE (0006)</th>
+                <th colspan="3" class="border border-slate-400 p-1.5 bg-teal-800">PERISHABLE (1081)</th>
+                <th colspan="4" class="border border-slate-400 p-1.5 bg-indigo-900">GENERAL CGO (9999)</th>
+                <th colspan="2" class="border border-slate-400 p-1.5 bg-purple-900">OTOP</th>
+              </tr>
+              <tr class="bg-slate-100 text-slate-800 font-bold">
+                <th class="border border-slate-300 p-1">M</th>
+                <th class="border border-slate-300 p-1">N</th>
+                <th class="border border-slate-300 p-1">Q45</th>
+                <th class="border border-slate-300 p-1">100</th>
+                <th class="border border-slate-300 p-1">250</th>
+                <th class="border border-slate-300 p-1">500</th>
+                <th class="border border-slate-300 p-1">1000</th>
+                <th class="border border-slate-300 p-1">100</th>
+                <th class="border border-slate-300 p-1">250</th>
+                <th class="border border-slate-300 p-1">500</th>
+                <th class="border border-slate-300 p-1">100</th>
+                <th class="border border-slate-300 p-1">250</th>
+                <th class="border border-slate-300 p-1">500</th>
+                <th class="border border-slate-300 p-1">1000</th>
+                <th class="border border-slate-300 p-1">45</th>
+                <th class="border border-slate-300 p-1">100</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr><td class="border border-slate-300 p-1.5 text-left font-semibold">CHIANG RAI</td><td class="border border-slate-300 p-1.5 font-bold">CEI</td><td class="border border-slate-300 p-1.5">120</td><td class="border border-slate-300 p-1.5 font-bold">24</td><td class="border border-slate-300 p-1.5">19</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">11</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">12</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">6</td></tr>
+              <tr class="bg-slate-50"><td class="border border-slate-300 p-1.5 text-left font-semibold">CHIANG MAI</td><td class="border border-slate-300 p-1.5 font-bold">CNX</td><td class="border border-slate-300 p-1.5">120</td><td class="border border-slate-300 p-1.5 font-bold">20</td><td class="border border-slate-300 p-1.5">16</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">11</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">12</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">6</td></tr>
+              <tr><td class="border border-slate-300 p-1.5 text-left font-semibold">KHON KAEN</td><td class="border border-slate-300 p-1.5 font-bold">KKC</td><td class="border border-slate-300 p-1.5">120</td><td class="border border-slate-300 p-1.5 font-bold">15</td><td class="border border-slate-300 p-1.5">11</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">6</td></tr>
+              <tr class="bg-slate-50"><td class="border border-slate-300 p-1.5 text-left font-semibold">UBON RATCHATHANI</td><td class="border border-slate-300 p-1.5 font-bold">UBP</td><td class="border border-slate-300 p-1.5">120</td><td class="border border-slate-300 p-1.5 font-bold">18</td><td class="border border-slate-300 p-1.5">14</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">6</td></tr>
+              <tr><td class="border border-slate-300 p-1.5 text-left font-semibold">UDON THANI</td><td class="border border-slate-300 p-1.5 font-bold">UTH</td><td class="border border-slate-300 p-1.5">120</td><td class="border border-slate-300 p-1.5 font-bold">17</td><td class="border border-slate-300 p-1.5">13</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">6</td></tr>
+              <tr class="bg-slate-50"><td class="border border-slate-300 p-1.5 text-left font-semibold">HAT YAI</td><td class="border border-slate-300 p-1.5 font-bold">HDY</td><td class="border border-slate-300 p-1.5">120</td><td class="border border-slate-300 p-1.5 font-bold">26</td><td class="border border-slate-300 p-1.5">20</td><td class="border border-slate-300 p-1.5">11</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">12</td><td class="border border-slate-300 p-1.5">11</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">13</td><td class="border border-slate-300 p-1.5">11</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">6</td></tr>
+              <tr><td class="border border-slate-300 p-1.5 text-left font-semibold">PHUKET</td><td class="border border-slate-300 p-1.5 font-bold">HKT</td><td class="border border-slate-300 p-1.5">120</td><td class="border border-slate-300 p-1.5 font-bold">24</td><td class="border border-slate-300 p-1.5">19</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">11</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">12</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">6</td></tr>
+              <tr class="bg-slate-50"><td class="border border-slate-300 p-1.5 text-left font-semibold">KRABI</td><td class="border border-slate-300 p-1.5 font-bold">KBV</td><td class="border border-slate-300 p-1.5">120</td><td class="border border-slate-300 p-1.5 font-bold">22</td><td class="border border-slate-300 p-1.5">17</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">6</td></tr>
+              <tr><td class="border border-slate-300 p-1.5 text-left font-semibold">SURAT THANI</td><td class="border border-slate-300 p-1.5 font-bold">URT</td><td class="border border-slate-300 p-1.5">120</td><td class="border border-slate-300 p-1.5 font-bold">20</td><td class="border border-slate-300 p-1.5">15</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">8</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">10</td><td class="border border-slate-300 p-1.5">9</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">-</td><td class="border border-slate-300 p-1.5">7</td><td class="border border-slate-300 p-1.5">6</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch pt-2">
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs text-slate-700 space-y-1.5 leading-relaxed flex flex-col justify-between">
+            <div class="space-y-1.5">
+              <div class="font-bold text-[#2E0057]">รายละเอียดค่าธรรมเนียมประกอบการขนส่ง:</div>
+              <ul class="list-disc pl-4 space-y-1">
+                <li><strong>(TG) TERMINAL CHARGE:</strong> 0.1–0.5 กก. = 30 บาท / 0.51–29.50 กก. = 40 บาท / 29.51–99.50 กก. = 50 บาท / 99.51–499.50 กก. = 100 บาท / 499.51 กก. ขึ้นไป = 200 บาท</li>
+                <li><strong>(SD) CARTAGE CHARGE:</strong> 0.1–10 กก. = 10 บาท / 10.1–300.0 กก. คิด กก.ละ 1 บาท</li>
+                <li><strong>(BI) AIR WAYBILL FEE:</strong> สำหรับสินค้าขาออกในอัตรา 20 บาท / AWB</li>
+                <li><strong>(MY) FUEL SURCHARGE:</strong> กก.ละ 1 บาท</li>
+                <li><strong>(MR) WITHHOLDING TAX:</strong> หัก ณ ที่จ่าย 1% (เฉพาะนิติบุคคล)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl overflow-hidden flex flex-col">
+            <div class="bg-[#3B0054] text-white font-prompt font-bold text-xs px-3.5 py-2 text-center">
+              ตารางค่าบริการคลังสินค้า (TERMINAL CHARGE)
+            </div>
+            <table class="w-full flex-1 text-xs text-center border-collapse">
+              <thead>
+                <tr class="bg-slate-100 text-slate-800 font-bold border-b border-slate-200">
+                  <th class="p-2 border-r border-slate-200">น้ำหนัก (CHARGEABLE WEIGHT)</th>
+                  <th class="p-2">TERMINAL CHARGE (บาท)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                <tr><td class="p-2 border-r border-slate-200">0.10 – 0.50 กก.</td><td class="p-2 font-semibold">30.00</td></tr>
+                <tr class="bg-slate-50"><td class="p-2 border-r border-slate-200">0.51 – 29.50 กก.</td><td class="p-2 font-semibold">40.00</td></tr>
+                <tr><td class="p-2 border-r border-slate-200">29.51 – 99.50 กก.</td><td class="p-2 font-semibold">50.00</td></tr>
+                <tr class="bg-slate-50"><td class="p-2 border-r border-slate-200">99.51 – 499.50 กก.</td><td class="p-2 font-semibold">100.00</td></tr>
+                <tr><td class="p-2 border-r border-slate-200">499.51 กก. ขึ้นไป</td><td class="p-2 font-semibold">200.00</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== แท็บ 3: เงื่อนไข / ขั้นตอน ==================== -->
+    <section id="sec-guidelines" class="hidden space-y-5">
+
+      <div class="rounded-2xl overflow-hidden shadow-md border border-purple-900/15 bg-gradient-to-br from-[#240046] via-[#3B0054] to-[#520a73] p-5 sm:p-6 text-white">
+        <div class="text-center max-w-2xl mx-auto mb-5">
+          <span class="inline-block bg-amber-400 text-[#210657] font-prompt font-bold text-[11px] px-3 py-0.5 rounded-full uppercase tracking-wider mb-1.5">
+            WALK-IN SERVICE GUIDE
+          </span>
+          <h2 class="font-prompt text-lg sm:text-2xl font-bold tracking-wide">
+            ขั้นตอนการใช้บริการส่งสินค้าสำหรับลูกค้า Walk-in
+          </h2>
+          <p class="text-xs sm:text-sm text-purple-100 mt-1">
+            เตรียมข้อมูลและบรรจุภัณฑ์ให้พร้อมก่อนถึงคลังสินค้า เพื่อความสะดวกรวดเร็วในการออกใบตราส่ง (AWB)
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-slate-800">
+          <div class="bg-white rounded-xl p-4 sm:p-5 shadow-md flex flex-col justify-between border-t-4 border-amber-400">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="bg-purple-100 text-[#3B0054] font-prompt font-bold text-xs px-2.5 py-1 rounded-lg">ขั้นตอนที่ 1</span>
+                <span class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm">✎</span>
+              </div>
+              <h3 class="font-prompt font-bold text-base text-[#210657]">เขียนข้อมูลหน้ากล่องให้ครบ</h3>
+              <ul class="text-xs sm:text-sm text-slate-600 mt-2 space-y-1.5 list-disc pl-4 leading-relaxed">
+                <li>เขียน <strong>ชื่อ-นามสกุลผู้ส่ง, ชื่อ-นามสกุลผู้รับ, เบอร์โทรศัพท์ติดต่อ</strong> ทั้งสองฝ่าย และ <strong>จังหวัดปลายทาง</strong> บนกล่องให้ชัดเจน</li>
+                <li><strong>ต้องการออกใบกำกับภาษี:</strong> สามารถแจ้งชื่อบริษัท ที่อยู่ และเลขประจำตัวผู้เสียภาษีกับเจ้าหน้าที่หน้าเคาน์เตอร์ได้เลย</li>
+              </ul>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 text-[11px] font-semibold text-[#D81B8A]">
+              * ตรวจสอบความแข็งแรงของบรรจุภัณฑ์ก่อนนำส่ง
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl p-4 sm:p-5 shadow-md flex flex-col justify-between border-t-4 border-[#D81B8A]">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="bg-pink-100 text-[#D81B8A] font-prompt font-bold text-xs px-2.5 py-1 rounded-lg">ขั้นตอนที่ 2</span>
+                <span class="w-8 h-8 rounded-full bg-pink-100 text-[#D81B8A] flex items-center justify-center font-bold text-sm">⚖</span>
+              </div>
+              <h3 class="font-prompt font-bold text-base text-[#210657]">ยื่นบัตรประชาชน & ชั่งน้ำหนัก</h3>
+              <ul class="text-xs sm:text-sm text-slate-600 mt-2 space-y-1.5 list-disc pl-4 leading-relaxed">
+                <li>นำสินค้ามาติดต่อที่เคาน์เตอร์ <strong>ล่วงหน้าอย่างน้อย 2–3 ชั่วโมง</strong> ก่อนเวลาเครื่องออก</li>
+                <li>แสดง <strong>บัตรประจำตัวประชาชนฉบับจริง</strong> (หรือหนังสือเดินทาง) ของผู้ส่งต่อเจ้าหน้าที่เพื่อตรวจรับและชั่งน้ำหนักสินค้า</li>
+              </ul>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 text-[11px] font-semibold text-[#3B0054]">
+              * เปิดรับฝากขาออกทุกวัน เวลา 04:00 – 19:00 น.
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl p-4 sm:p-5 shadow-md flex flex-col justify-between border-t-4 border-emerald-500">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="bg-emerald-100 text-emerald-800 font-prompt font-bold text-xs px-2.5 py-1 rounded-lg">ขั้นตอนที่ 3</span>
+                <span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">✓</span>
+              </div>
+              <h3 class="font-prompt font-bold text-base text-[#210657]">ชำระเงิน & รับใบตราส่ง (AWB)</h3>
+              <ul class="text-xs sm:text-sm text-slate-600 mt-2 space-y-1.5 list-disc pl-4 leading-relaxed">
+                <li>ชำระค่าบริการด้วย <strong>เงินสด</strong> หรือ <strong>บัตรเครดิต (เมื่อมียอดตั้งแต่ 500 บาทขึ้นไป)</strong></li>
+                <li>รับเอกสาร <strong>ใบตราส่งสินค้า (Air Waybill)</strong> และส่งเลขที่ AWB 11 หลักให้ผู้รับปลายทางใช้ติดต่อรับสินค้า</li>
+              </ul>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 text-[11px] font-semibold text-emerald-700">
+              * สินค้าถึงปลายทางรวดเร็วภายในวันเดียว
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+          <h2 class="font-prompt text-base sm:text-lg font-bold text-[#2E0057]">ข้อจำกัดขนาดและน้ำหนักสินค้า (ต่อ 1 ชิ้น)</h2>
+          <span class="text-xs font-semibold bg-purple-50 text-[#3B0054] px-2.5 py-1 rounded-full">มาตรฐานความปลอดภัยการบิน</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-sm">
+          <div class="bg-slate-50 hover:bg-purple-50/40 transition p-4 rounded-xl border border-slate-200/80 border-l-4 border-l-[#3B0054]">
+            <div class="font-prompt font-bold text-[#2E0057]">1. กล่อง / สินค้าทั่วไป</div>
+            <p class="text-slate-600 mt-1 text-xs sm:text-sm">น้ำหนักสูงสุดไม่เกิน <strong>50 กก./ชิ้น</strong> • ขนาดสูงสุดไม่เกิน <strong>กว้าง 140 × ยาว 200 × สูง 90 ซม.</strong></p>
+          </div>
+          <div class="bg-slate-50 hover:bg-purple-50/40 transition p-4 rounded-xl border border-slate-200/80 border-l-4 border-l-[#D81B8A]">
+            <div class="font-prompt font-bold text-[#2E0057]">2. กล่องโฟมมาตรฐาน</div>
+            <p class="text-slate-600 mt-1 text-xs sm:text-sm">ขนาดกล่องโฟมไม่เกิน <strong>กว้าง 60 × ยาว 75 × สูง 45 ซม.</strong></p>
+          </div>
+          <div class="bg-slate-50 hover:bg-purple-50/40 transition p-4 rounded-xl border border-slate-200/80 border-l-4 border-l-amber-500">
+            <div class="font-prompt font-bold text-[#2E0057]">3. สินค้าทรงแท่งยาว</div>
+            <p class="text-slate-600 mt-1 text-xs sm:text-sm">ท่อ PVC และแท่งเหล็ก/หัวเจาะน้ำมัน ความยาวสูงสุดไม่เกิน <strong>4.5 เมตร</strong></p>
+          </div>
+          <div class="bg-slate-50 hover:bg-purple-50/40 transition p-4 rounded-xl border border-slate-200/80 border-l-4 border-l-indigo-500">
+            <div class="font-prompt font-bold text-[#2E0057]">4. สินค้าชิ้นเล็กและเอกสาร</div>
+            <p class="text-slate-600 mt-1 text-xs sm:text-sm">ของชิ้นเล็ก (เช่น กุญแจ) หรือหนังสือเดินทาง ต้องบรรจุใน<strong>ซองขนาด A4 ขึ้นไปเท่านั้น</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+          <h2 class="font-prompt text-base sm:text-lg font-bold text-[#2E0057]">เงื่อนไขสินค้าพิเศษและข้อกำหนดเฉพาะ</h2>
+          <span class="text-xs font-semibold bg-rose-50 text-[#D81B8A] px-2.5 py-1 rounded-full">กรุณาตรวจสอบก่อนนำส่ง</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs sm:text-sm">
+          <div class="p-4 rounded-xl bg-sky-50/60 border border-sky-200/80 space-y-1">
+            <div class="font-prompt font-bold text-sky-950">1. สินค้ามีความเย็น ความชื้น หรือมีน้ำ (อาหารสด ยาแช่เย็น ปลามีชีวิต)</div>
+            <p class="text-slate-700 leading-relaxed">
+              ต้องห่อหุ้มตัวสินค้าภายในกล่องโฟมด้วย <strong>ถุงพลาสติก 3 ชั้น และหุ้มนอกกล่องโฟมอีก 2 ชั้น</strong> เพื่อป้องกันน้ำรั่วซึม
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-cyan-50/60 border border-cyan-200/80 space-y-1">
+            <div class="font-prompt font-bold text-cyan-950">2. กล่องโฟมที่มีน้ำและเจลเย็นเป็นส่วนประกอบ</div>
+            <p class="text-slate-700 leading-relaxed">
+              จำกัดน้ำหนักรวมสูงสุด <strong>ไม่เกิน 20–25 กิโลกรัม ต่อกล่อง</strong>
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200/80 space-y-1">
+            <div class="font-prompt font-bold text-emerald-950">3. สัตว์มีชีวิต (Live Animals)</div>
+            <p class="text-slate-700 leading-relaxed">
+              <strong>ไม่รับสัตว์เลี้ยงทุกชนิด</strong> (สุนัข แมว ฯลฯ) ยกเว้น <strong>สัตว์น้ำ พันธุ์ปลา ปลาสวยงาม และกุ้งสวยงาม</strong>
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-200/80 space-y-1">
+            <div class="font-prompt font-bold text-amber-950">4. แบตเตอรี่ลิเธียม (Lithium Ion / Metal)</div>
+            <p class="text-slate-700 leading-relaxed">
+              จัดส่งได้ <strong>เฉพาะปลายทางเชียงใหม่ (CNX) และภูเก็ต (HKT)</strong> เท่านั้น
+            </p>
+          </div>
+
+          <div class="md:col-span-2 p-4 rounded-xl bg-purple-50/70 border border-purple-200 space-y-1">
+            <div class="font-prompt font-bold text-[#2E0057]">5. กล่องโฟมเปล่า (Empty Foam Box)</div>
+            <p class="text-slate-700 leading-relaxed">
+              คิดอัตราค่าบริการ <strong>กิโลกรัมละ 30 บาท แต่ไม่ต่ำกว่า Minimum 1,500 บาท</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== แท็บ 4: บริการรับสินค้า (ขาเข้า) ==================== -->
+    <section id="sec-inbound" class="hidden space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <h2 class="font-prompt text-base sm:text-lg font-bold text-[#2E0057]">บริการรับสินค้า (ขาเข้า)</h2>
+          <span class="bg-purple-50 text-[#3B0054] border border-purple-200 text-xs font-bold px-3 py-1.5 rounded-full">
+            เปิดให้บริการทุกวัน 07:00 - 24:00 น.
+          </span>
+        </div>
+
+        <div class="border border-slate-200 rounded-xl overflow-hidden">
+          <div class="bg-[#3B0054] text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2">
+            <div class="font-prompt font-bold text-xs sm:text-sm">ตารางเที่ยวบินขาเข้าภายในประเทศ (Arrival Flight Information)</div>
+          </div>
+
+          <div class="p-3 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row gap-2">
+            <select id="inboundOriginFilter" onchange="renderInboundTable()" class="border border-slate-300 rounded-lg px-3 py-2 text-xs sm:text-sm bg-white text-slate-800 focus:outline-none focus:border-[#3B0054]">
+              <option value="ALL">ทุกเส้นทางต้นทาง (ทั้งหมด)</option>
+              <option value="CNX">เชียงใหม่ (CNX ⮕ BKK)</option>
+              <option value="CEI">เชียงราย (CEI ⮕ BKK)</option>
+              <option value="KKC">ขอนแก่น (KKC ⮕ BKK)</option>
+              <option value="UBP">อุบลราชธานี (UBP ⮕ BKK)</option>
+              <option value="UTH">อุดรธานี (UTH ⮕ BKK)</option>
+              <option value="HKT">ภูเก็ต (HKT ⮕ BKK)</option>
+              <option value="HDY">หาดใหญ่ (HDY ⮕ BKK)</option>
+              <option value="KBV">กระบี่ (KBV ⮕ BKK)</option>
+            </select>
+            <input type="text" id="inboundSearch" onkeyup="renderInboundTable()" placeholder="ค้นหารหัสเที่ยวบินขาเข้า เช่น TG101, TG202..."
+              class="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-xs sm:text-sm bg-white text-slate-800 focus:outline-none focus:border-[#3B0054]">
+          </div>
+
+          <div class="overflow-x-auto max-h-[380px] overflow-y-auto">
+            <table class="w-full text-xs sm:text-sm text-center border-collapse">
+              <thead class="sticky top-0 bg-slate-100 text-[#210657] font-prompt font-bold border-b border-slate-200 shadow-2xs">
+                <tr>
+                  <th class="p-2.5 border-r border-slate-200 w-1/3">เที่ยวบิน (FLIGHT)</th>
+                  <th class="p-2.5 border-r border-slate-200 w-1/3">เวลาถึง (STA)</th>
+                  <th class="p-2.5 w-1/3">เส้นทางบิน (ROUTING)</th>
+                </tr>
+              </thead>
+              <tbody id="inboundFlightBody" class="divide-y divide-slate-200 bg-white"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-sm">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-2">
+            <div class="font-prompt font-bold text-[#2E0057] text-sm">1. เอกสารที่ต้องเตรียมมารับสินค้า</div>
+            <ul class="text-xs sm:text-sm text-slate-700 space-y-1.5 list-disc pl-5">
+              <li><strong>แจ้งเลขที่ใบตราส่งสินค้า (Air Waybill - AWB)</strong> ต่อเจ้าหน้าที่เคาน์เตอร์ขาเข้า</li>
+              <li><strong>กรณีผู้รับมารับด้วยตนเอง:</strong> แสดงบัตรประจำตัวประชาชนฉบับจริง หรือหนังสือเดินทาง (Passport)</li>
+              <li><strong>กรณีมอบอำนาจให้ผู้อื่นมารับแทน:</strong> ใช้หนังสือมอบอำนาจ พร้อมสำเนาบัตรประชาชนของผู้รับตามหน้าใบ AWB และบัตรประชาชนตัวจริงของผู้มารับแทน</li>
+            </ul>
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-2">
+            <div class="font-prompt font-bold text-[#2E0057] text-sm">2. ระยะเวลาปลอดค่าเก็บรักษา (Free Storage)</div>
+            <ul class="text-xs sm:text-sm text-slate-700 space-y-1.5 list-disc pl-5">
+              <li><strong>สินค้าเน่าเสียง่าย / ของสด / สัตว์น้ำ:</strong> แนะนำให้ติดต่อรับสินค้าทันทีหลังจากเที่ยวบินลงจอด</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="bg-purple-50 border border-purple-200 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div class="font-prompt font-bold text-sm text-[#240046]">สอบถามสถานะสินค้าขาเข้า (สุวรรณภูมิ BKK)</div>
+            <div class="text-xs text-slate-600 mt-0.5">ติดต่อเจ้าหน้าที่แผนกขาเข้าได้ทุกวัน ตั้งแต่เวลา 07:00 - 24:00 น.</div>
+          </div>
+          <div class="font-prompt font-bold text-base sm:text-lg text-[#D81B8A]">
+            โทร. 02-137-4516-18
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== แท็บ 5: ติดต่อเรา / FAQ ==================== -->
+    <section id="sec-contact" class="hidden space-y-5">
+
+      <!-- 1. การ์ดแผนที่ & ที่อยู่คลังสินค้าภายในประเทศ (สไตล์ thaicargo.com/th/contact) -->
+      <div id="stationMapCard" class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+
+          <!-- ด้านซ้าย: แผนที่ Google Maps แบบฝัง -->
+          <div class="lg:col-span-5 flex flex-col">
+            <div class="relative w-full h-64 sm:h-72 lg:h-full min-h-[260px] rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+              <iframe id="stationMapFrame"
+                src="https://maps.google.com/maps?q=Thai%20Airways%20Domestic%20Cargo%20Terminal%20Suvarnabhumi%20Airport&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                class="w-full h-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                title="แผนที่คลังสินค้าภายในประเทศ">
+              </iframe>
+            </div>
+          </div>
+
+          <!-- ด้านขวา: รายละเอียด Address / Tel / E-mail -->
+          <div class="lg:col-span-7 flex flex-col justify-between space-y-4">
+            <div class="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 pb-3">
+              <div>
+                <h2 id="stationTitle" class="font-prompt text-base sm:text-lg font-bold text-[#210657] leading-snug">
+                  Bangkok : Walk in Customer (Thailand Only) ภายในประเทศ
+                </h2>
+                <span id="stationBadge" class="inline-block mt-1 bg-purple-50 text-[#3B0054] border border-purple-200 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+                  คลังสินค้าภายในประเทศ ท่าอากาศยานสุวรรณภูมิ (BKK)
+                </span>
+              </div>
+              <a id="stationMapLink" href="https://maps.google.com/?q=Thai+Airways+Domestic+Cargo+Terminal+Suvarnabhumi+Airport" target="_blank" rel="noopener noreferrer"
+                class="text-xs sm:text-sm font-semibold text-[#1a73e8] hover:underline shrink-0 inline-flex items-center gap-1">
+                <span>View larger map</span>
+                <span>↗</span>
+              </a>
+            </div>
+
+            <div class="divide-y divide-slate-100 text-xs sm:text-sm">
+              <!-- Address -->
+              <div class="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1.5 sm:gap-3">
+                <div class="sm:col-span-3 font-semibold text-slate-500">Address</div>
+                <div id="stationAddress" class="sm:col-span-9 text-slate-800 leading-relaxed">
+                  Thai Airways International Public Company Limited Domestic Cargo Building,<br>
+                  Suvarnabhumi Airport 333/1 Moo 7, Rachathewa, Bangphli, Samut Prakarn 10540
+                </div>
+              </div>
+
+              <!-- Tel (ข้อความธรรมดา ไม่เชื่อมลิงก์) -->
+              <div class="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1.5 sm:gap-3">
+                <div class="sm:col-span-3 font-semibold text-slate-500">Tel</div>
+                <div id="stationTel" class="sm:col-span-9 text-slate-800 space-y-1.5 leading-relaxed">
+                  <div>- ส่งสินค้า (Cargo Acceptance) Tel : <span class="font-bold text-[#210657]">02-137-4521, 02-137-4524-25</span> (04:00 - 19:00 น.)</div>
+                  <div>- รับฝากสินค้า (Cargo Acceptance) Tel : <span class="font-bold text-[#210657]">02-137-4523</span> (04:00 - 19:00 น.)</div>
+                  <div>- รับสินค้าขาเข้า (Cargo Delivery) Tel : <span class="font-bold text-[#210657]">02-137-4516-18</span> (07:00 - 24:00 น.)</div>
+                </div>
+              </div>
+
+              <!-- E-mail (แสดงเฉพาะสถานีสุวรรณภูมิ BKK) -->
+              <div id="stationEmailRow" class="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1.5 sm:gap-3">
+                <div class="sm:col-span-3 font-semibold text-slate-500">E-mail</div>
+                <div id="stationEmail" class="sm:col-span-9 text-slate-800 space-y-1.5 leading-relaxed">
+                  <div>- ส่งสินค้า (Cargo Acceptance) E-mail : <span class="font-semibold text-[#3B0054]">xbd2domestic@thaiairways.com</span></div>
+                  <div>- รับสินค้า (Cargo Delivery) E-mail : <span class="font-semibold text-[#3B0054]">xbd2domimp@thaiairways.com</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 2. ตารางเบอร์โทรศัพท์และเวลาทำการคลังสินค้าภายในประเทศ (คลิกเฉพาะชื่อสถานีเพื่อเปลี่ยนแผนที่ด้านบน) -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3 overflow-x-auto">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+          <h2 class="font-prompt text-base font-bold text-[#2E0057]">เบอร์โทรศัพท์และเวลาทำการคลังสินค้าภายในประเทศ</h2>
+          <span class="text-[11px] font-semibold bg-pink-50 text-[#D81B8A] border border-pink-200 px-2.5 py-1 rounded-full">
+            คลิกที่ชื่อสถานีเพื่อดูแผนที่และที่อยู่ด้านบน
+          </span>
+        </div>
+
+        <table class="w-full text-xs sm:text-sm text-left border-collapse">
+          <thead>
+            <tr class="bg-purple-50 text-[#2E0057]">
+              <th class="p-2.5 border-b">สถานี / จังหวัด (คลิกเพื่อดูแผนที่)</th>
+              <th class="p-2.5 border-b">เบอร์โทรศัพท์</th>
+              <th class="p-2.5 border-b">เวลาทำการ</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr data-station="BKK" class="station-row bg-purple-50/50 transition">
+              <td class="p-2.5 font-semibold">
+                <button type="button" onclick="selectStation('BKK')" class="text-left text-[#210657] hover:text-[#D81B8A] hover:underline cursor-pointer inline-flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-[#3B0054] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span>สุวรรณภูมิ (BKK) - ส่งสินค้าขาออก</span>
+                </button>
+              </td>
+              <td class="p-2.5 text-slate-700 font-medium">02-137-4521, 02-137-4524-25</td>
+              <td class="p-2.5">04:00 - 19:00 น.</td>
+            </tr>
+            <tr data-station="BKK" class="station-row bg-purple-50/50 transition">
+              <td class="p-2.5 font-semibold">
+                <button type="button" onclick="selectStation('BKK')" class="text-left text-[#210657] hover:text-[#D81B8A] hover:underline cursor-pointer inline-flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-[#3B0054] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span>สุวรรณภูมิ (BKK) - รับฝากสินค้า</span>
+                </button>
+              </td>
+              <td class="p-2.5 text-slate-700 font-medium">02-137-4523</td>
+              <td class="p-2.5">04:00 - 19:00 น.</td>
+            </tr>
+            <tr data-station="BKK" class="station-row bg-purple-50/50 transition">
+              <td class="p-2.5 font-semibold">
+                <button type="button" onclick="selectStation('BKK')" class="text-left text-[#210657] hover:text-[#D81B8A] hover:underline cursor-pointer inline-flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-[#3B0054] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span>สุวรรณภูมิ (BKK) - รับสินค้าขาเข้า</span>
+                </button>
+              </td>
+              <td class="p-2.5 text-slate-700 font-medium">02-137-4516-18</td>
+              <td class="p-2.5">07:00 - 24:00 น.</td>
+            </tr>
+            <tr data-station="CNX" class="station-row transition">
+              <td class="p-2.5 font-semibold">
+                <button type="button" onclick="selectStation('CNX')" class="text-left text-[#210657] hover:text-[#D81B8A] hover:underline cursor-pointer inline-flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-[#3B0054] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span>เชียงใหม่ (CNX) - TG Cargo</span>
+                </button>
+              </td>
+              <td class="p-2.5 text-slate-700 font-medium">053-277-439</td>
+              <td class="p-2.5">07:00 - 22:00 น.</td>
+            </tr>
+            <tr data-station="CEI" class="station-row transition">
+              <td class="p-2.5 font-semibold">
+                <button type="button" onclick="selectStation('CEI')" class="text-left text-[#210657] hover:text-[#D81B8A] hover:underline cursor-pointer inline-flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-[#3B0054] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span>เชียงราย (CEI) - AVINDUS</span>
+                </button>
+              </td>
+              <td class="p-2.5 text-slate-700 font-medium">061-729-1852, 053-798-221</td>
+              <td class="p-2.5">06:00 - 20:00 น.</td>
+            </tr>
+            <tr data-station="UBP" class="station-row transition">
+              <td class="p-2.5 font-semibold">
+                <button type="button" onclick="selectStation('UBP')" class="text-left text-[#210657] hover:text-[#D81B8A] hover:underline cursor-pointer inline-flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-[#3B0054] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span>อุบลราชธานี (UBP) - AVINDUS</span>
+                </button>
+              </td>
+              <td class="p-2.5 text-slate-700 font-medium">063-345-4766, 093-358-5896</td>
+              <td class="p-2.5">06:00 - 18:00 น.</td>
+            </tr>
+            <tr data-station="UTH" class="station-row transition">
+              <td class="p-2.5 font-semibold">
+                <button type="button" onclick="selectStation('UTH')" class="text-left text-[#210657] hover:text-[#D81B8A] hover:underline cursor-pointer inline-flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-[#3B0054] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span>อุดรธานี (UTH) - AVINDUS</span>
+                </button>
+              </td>
+              <td class="p-2.5 text-slate-700 font-medium">096-387-1132</td>
+              <td class="p-2.5">06:00 - 20:00 น.</td>
+            </tr>
+            <tr data-station="KKC" class="station-row transition">
+              <td class="p-2.5 font-semibold">
+                <button type="button" onclick="selectStation('KKC')" class="text-left text-[#210657] hover:text-[#D81B8A] hover:underline cursor-pointer inline-flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-[#3B0054] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span>ขอนแก่น (KKC) - AVINDUS</span>
+                </button>
+              </td>
+              <td class="p-2.5 text-slate-700 font-medium">086-490-1644, 043-334-387</td>
+              <td class="p-2.5">08:30 - 19:00 น.</td>
+            </tr>
+            <tr data-station="HKT" class="station-row transition">
+              <td class="p-2.5 font-semibold">
+                <button type="button" onclick="selectStation('HKT')" class="text-left text-[#210657] hover:text-[#D81B8A] hover:underline cursor-pointer inline-flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-[#3B0054] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span>ภูเก็ต (HKT) - AOTGA</span>
+                </button>
+              </td>
+              <td class="p-2.5 text-slate-700 font-medium">076-351-355, 084-202-3374</td>
+              <td class="p-2.5">07:00 - 22:00 น.</td>
+            </tr>
+            <tr data-station="HDY" class="station-row transition">
+              <td class="p-2.5 font-semibold">
+                <button type="button" onclick="selectStation('HDY')" class="text-left text-[#210657] hover:text-[#D81B8A] hover:underline cursor-pointer inline-flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-[#3B0054] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span>หาดใหญ่ (HDY) - AVINDUS</span>
+                </button>
+              </td>
+              <td class="p-2.5 text-slate-700 font-medium">063-345-4765</td>
+              <td class="p-2.5">06:00 - 21:00 น.</td>
+            </tr>
+            <tr data-station="KBV" class="station-row transition">
+              <td class="p-2.5 font-semibold">
+                <button type="button" onclick="selectStation('KBV')" class="text-left text-[#210657] hover:text-[#D81B8A] hover:underline cursor-pointer inline-flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-[#3B0054] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span>กระบี่ (KBV) - AVINDUS</span>
+                </button>
+              </td>
+              <td class="p-2.5 text-slate-700 font-medium">092-902-1038, 063-341-5562</td>
+              <td class="p-2.5">07:00 - 21:00 น.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 3. คำถามที่พบบ่อย (FAQ) แบบคลิกเปิด-ปิดคำตอบสไตล์สายการบิน -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <h2 class="font-prompt text-base sm:text-lg font-bold text-[#210657]">
+            คำถามที่พบบ่อย (FAQ)
+          </h2>
+          <span class="bg-purple-50 text-[#3B0054] border border-purple-200 text-xs font-semibold px-3 py-1 rounded-full">
+            บริการขนส่งสินค้าภายในประเทศ
+          </span>
+        </div>
+
+        <div class="space-y-3" id="faqAccordion">
+
+          <!-- FAQ 1 -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden bg-white hover:border-purple-300 transition">
+            <button type="button" onclick="toggleFaq(this)" aria-expanded="true"
+              class="w-full px-4 py-3.5 text-left flex items-center justify-between gap-3 bg-purple-50/40 hover:bg-purple-50 transition cursor-pointer">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-lg bg-[#3B0054] text-white font-prompt font-bold text-xs flex items-center justify-center shrink-0">Q1</span>
+                <span class="font-prompt font-semibold text-xs sm:text-sm text-[#210657]">ต้องนำสินค้ามาส่งล่วงหน้ากี่ชั่วโมงก่อนเครื่องออก และต้องใช้เอกสารอะไรบ้าง?</span>
+              </div>
+              <svg class="faq-chevron w-5 h-5 text-[#D81B8A] shrink-0 transition-transform duration-200 rotate-180" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+            <div class="faq-answer px-4 sm:px-5 py-3.5 text-xs sm:text-sm text-slate-700 leading-relaxed bg-white border-t border-slate-100 space-y-1.5">
+              <p>• กรุณานำสินค้ามาติดต่อที่คลังสินค้า <strong>ล่วงหน้าอย่างน้อย 2–3 ชั่วโมง</strong> ก่อนเวลาเครื่องออก (STD) เพื่อให้มีเวลาเพียงพอสำหรับการตรวจ X-ray ชั่งน้ำหนัก และออกเอกสารใบตราส่ง (AWB)</p>
+              <p>• <strong>เอกสารที่ใช้:</strong> บัตรประจำตัวประชาชนฉบับจริง (หรือหนังสือเดินทาง) ของผู้ส่งสินค้า พร้อมเขียนชื่อ-ที่อยู่ และเบอร์โทรศัพท์ของผู้ส่ง-ผู้รับบนกล่องให้ชัดเจน</p>
+            </div>
+          </div>
+
+          <!-- FAQ 2 -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden bg-white hover:border-purple-300 transition">
+            <button type="button" onclick="toggleFaq(this)" aria-expanded="false"
+              class="w-full px-4 py-3.5 text-left flex items-center justify-between gap-3 bg-white hover:bg-purple-50/50 transition cursor-pointer">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-lg bg-purple-100 text-[#3B0054] font-prompt font-bold text-xs flex items-center justify-center shrink-0">Q2</span>
+                <span class="font-prompt font-semibold text-xs sm:text-sm text-[#210657]">สามารถชำระค่าบริการผ่านช่องทางใดได้บ้าง และขอใบกำกับภาษีได้หรือไม่?</span>
+              </div>
+              <svg class="faq-chevron w-5 h-5 text-[#3B0054] shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+            <div class="faq-answer hidden px-4 sm:px-5 py-3.5 text-xs sm:text-sm text-slate-700 leading-relaxed bg-white border-t border-slate-100 space-y-1.5">
+              <p>• รับชำระเฉพาะ <strong>เงินสด</strong> และ <strong>บัตรเครดิต (เมื่อมียอดชำระตั้งแต่ 500 บาทขึ้นไป)</strong></p>
+              <p>• สามารถขอออกใบกำกับภาษีเต็มรูปแบบได้ โดยแจ้งชื่อบริษัท ที่อยู่ และเลขประจำตัวผู้เสียภาษีกับเจ้าหน้าที่หน้าเคาน์เตอร์ก่อนออกใบเสร็จ</p>
+            </div>
+          </div>
+
+          <!-- FAQ 3 -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden bg-white hover:border-purple-300 transition">
+            <button type="button" onclick="toggleFaq(this)" aria-expanded="false"
+              class="w-full px-4 py-3.5 text-left flex items-center justify-between gap-3 bg-white hover:bg-purple-50/50 transition cursor-pointer">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-lg bg-purple-100 text-[#3B0054] font-prompt font-bold text-xs flex items-center justify-center shrink-0">Q3</span>
+                <span class="font-prompt font-semibold text-xs sm:text-sm text-[#210657]">วิธีคำนวณน้ำหนักเทียบปริมาตร (Volumetric Weight) คิดอย่างไร?</span>
+              </div>
+              <svg class="faq-chevron w-5 h-5 text-[#3B0054] shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+            <div class="faq-answer hidden px-4 sm:px-5 py-3.5 text-xs sm:text-sm text-slate-700 leading-relaxed bg-white border-t border-slate-100 space-y-1.5">
+              <p>• ใช้สูตร <strong>(กว้าง × ยาว × สูง หน่วยเป็นเซนติเมตร) ÷ 6,000</strong> แล้วนำค่าที่ได้มาเปรียบเทียบกับน้ำหนักชั่งจริงบนตาชั่ง โดยระบบจะเลือกใช้น้ำหนักที่มากกว่า (Chargeable Weight) ในการคำนวณค่าบริการ</p>
+              <p>• ท่านสามารถทดลองกรอกขนาดกล่องและน้ำหนักในแท็บ <strong>“คำนวณค่าบริการ”</strong> เพื่อดูยอดประมาณการล่วงหน้าได้ทันที</p>
+            </div>
+          </div>
+
+          <!-- FAQ 4 -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden bg-white hover:border-purple-300 transition">
+            <button type="button" onclick="toggleFaq(this)" aria-expanded="false"
+              class="w-full px-4 py-3.5 text-left flex items-center justify-between gap-3 bg-white hover:bg-purple-50/50 transition cursor-pointer">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-lg bg-purple-100 text-[#3B0054] font-prompt font-bold text-xs flex items-center justify-center shrink-0">Q4</span>
+                <span class="font-prompt font-semibold text-xs sm:text-sm text-[#210657]">ส่งอาหารสด อาหารทะเล หรือกล่องโฟมแช่เย็น มีข้อกำหนดการแพ็กอย่างไร?</span>
+              </div>
+              <svg class="faq-chevron w-5 h-5 text-[#3B0054] shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+            <div class="faq-answer hidden px-4 sm:px-5 py-3.5 text-xs sm:text-sm text-slate-700 leading-relaxed bg-white border-t border-slate-100 space-y-1.5">
+              <p>• ต้องห่อหุ้มสินค้าภายในกล่องโฟมด้วย <strong>ถุงพลาสติก 3 ชั้น และหุ้มนอกกล่องโฟมอีก 2 ชั้น</strong> เพื่อป้องกันน้ำหรือความชื้นรั่วซึมสู่ห้องสัมภาระเครื่องบิน</p>
+              <p>• ขนาดกล่องโฟมต้องไม่เกิน <strong>กว้าง 60 × ยาว 75 × สูง 45 ซม.</strong> และหากมีน้ำหรือเจลเย็นเป็นส่วนประกอบ จำกัดน้ำหนักรวม <strong>ไม่เกิน 20–25 กก. ต่อกล่อง</strong></p>
+            </div>
+          </div>
+
+          <!-- FAQ 5 -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden bg-white hover:border-purple-300 transition">
+            <button type="button" onclick="toggleFaq(this)" aria-expanded="false"
+              class="w-full px-4 py-3.5 text-left flex items-center justify-between gap-3 bg-white hover:bg-purple-50/50 transition cursor-pointer">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-lg bg-purple-100 text-[#3B0054] font-prompt font-bold text-xs flex items-center justify-center shrink-0">Q5</span>
+                <span class="font-prompt font-semibold text-xs sm:text-sm text-[#210657]">สามารถส่งสัตว์เลี้ยง (สุนัข/แมว) หรือแบตเตอรี่ลิเธียมในเที่ยวบินภายในประเทศได้หรือไม่?</span>
+              </div>
+              <svg class="faq-chevron w-5 h-5 text-[#3B0054] shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+            <div class="faq-answer hidden px-4 sm:px-5 py-3.5 text-xs sm:text-sm text-slate-700 leading-relaxed bg-white border-t border-slate-100 space-y-1.5">
+              <p>• <strong>สัตว์มีชีวิต:</strong> ไม่รับขนส่งสัตว์เลี้ยงทุกชนิด (สุนัข แมว ฯลฯ) ยกเว้น <strong>สัตว์น้ำ พันธุ์ปลา ปลาสวยงาม และกุ้งสวยงาม</strong> เท่านั้น</p>
+              <p>• <strong>แบตเตอรี่ลิเธียม (Lithium Ion / Metal):</strong> สามารถจัดส่งได้ <strong>เฉพาะปลายทางเชียงใหม่ (CNX) และภูเก็ต (HKT)</strong> เท่านั้น</p>
+            </div>
+          </div>
+
+          <!-- FAQ 6 -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden bg-white hover:border-purple-300 transition">
+            <button type="button" onclick="toggleFaq(this)" aria-expanded="false"
+              class="w-full px-4 py-3.5 text-left flex items-center justify-between gap-3 bg-white hover:bg-purple-50/50 transition cursor-pointer">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-lg bg-purple-100 text-[#3B0054] font-prompt font-bold text-xs flex items-center justify-center shrink-0">Q6</span>
+                <span class="font-prompt font-semibold text-xs sm:text-sm text-[#210657]">ผู้รับปลายทางต้องใช้หลักฐานอะไรในการติดต่อรับสินค้าขาเข้า?</span>
+              </div>
+              <svg class="faq-chevron w-5 h-5 text-[#3B0054] shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+            <div class="faq-answer hidden px-4 sm:px-5 py-3.5 text-xs sm:text-sm text-slate-700 leading-relaxed bg-white border-t border-slate-100 space-y-1.5">
+              <p>• แจ้ง <strong>เลขที่ใบตราส่งสินค้า (AWB 11 หลัก)</strong> พร้อมแสดง <strong>บัตรประจำตัวประชาชนฉบับจริง</strong> ของผู้รับตามที่ระบุหน้าใบตราส่ง</p>
+              <p>• กรณีมอบอำนาจให้ผู้อื่นมารับแทน ต้องมีหนังสือมอบอำนาจ สำเนาบัตรประชาชนของผู้รับตามหน้า AWB และบัตรประชาชนตัวจริงของผู้มารับแทน</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==================== 6. ส่วนท้ายเว็บ (Global Footer เรียงคอลัมน์สไตล์ THAI Cargo) ==================== -->
+  <footer class="bg-white border-t border-slate-200 mt-12 text-slate-700">
+    <div class="max-w-5xl mx-auto px-4 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+
+        <div class="space-y-4">
+          <h3 class="font-prompt font-semibold text-slate-900 text-sm sm:text-base">
+            ศูนย์บริการลูกค้า Walk-in สุวรรณภูมิ (BKK)
+          </h3>
+          <div class="space-y-3 text-xs sm:text-sm">
+            <div>
+              <div class="text-slate-600">ส่งสินค้าขาออก (04:00 - 19:00 น.)</div>
+              <div class="text-[#3B0054] font-semibold mt-0.5">โทร. 02-137-4521, 02-137-4524-25</div>
+            </div>
+            <div>
+              <div class="text-slate-600">รับฝากสินค้า (04:00 - 19:00 น.)</div>
+              <div class="text-[#3B0054] font-semibold mt-0.5">โทร. 02-137-4523</div>
+            </div>
+            <div>
+              <div class="text-slate-600">รับสินค้าขาเข้า (07:00 - 24:00 น.)</div>
+              <div class="text-[#3B0054] font-semibold mt-0.5">โทร. 02-137-4516-18</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="font-prompt font-semibold text-slate-900 text-sm sm:text-base">
+            เมนูบริการหลัก
+          </h3>
+          <ul class="space-y-2.5 text-xs sm:text-sm text-[#3B0054]">
+            <li><button onclick="switchTabAndScroll('flights')" class="hover:text-[#D81B8A] transition cursor-pointer">ตารางและสถานะเที่ยวบิน</button></li>
+            <li><button onclick="switchTabAndScroll('calculator')" class="hover:text-[#D81B8A] transition cursor-pointer">คำนวณอัตราค่าบริการ</button></li>
+            <li><button onclick="switchTabAndScroll('guidelines')" class="hover:text-[#D81B8A] transition cursor-pointer">เงื่อนไข / ขั้นตอนการส่ง</button></li>
+            <li><button onclick="switchTabAndScroll('inbound')" class="hover:text-[#D81B8A] transition cursor-pointer">บริการรับสินค้า (ขาเข้า)</button></li>
+            <li><button onclick="switchTabAndScroll('contact')" class="hover:text-[#D81B8A] transition cursor-pointer">ติดต่อเรา / FAQ</button></li>
+          </ul>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-3">
+            <h3 class="font-prompt font-semibold text-slate-900 text-sm sm:text-base">
+              สนใจใช้บริการ
+            </h3>
+            <a href="https://www.thaicargo.com/th/main" target="_blank" rel="noopener noreferrer"
+              class="inline-flex items-center justify-between gap-4 bg-[#D81B8A] hover:bg-[#b81474] text-white font-prompt font-semibold text-xs tracking-wide px-5 py-3 rounded-lg shadow-sm transition">
+              <span>FOR MORE INFORMATION</span>
+              <span class="text-sm">›</span>
+            </a>
+          </div>
+
+          <div class="space-y-3">
+            <div class="font-prompt font-semibold text-xs text-slate-800 tracking-wider uppercase">
+              FOLLOW US
+            </div>
+            <div class="flex flex-col space-y-3">
+              <a href="https://www.thaiairways.com/en-th/" target="_blank" rel="noopener noreferrer"
+                class="inline-flex items-center gap-3 text-xs sm:text-sm font-medium text-[#3B0054] hover:text-[#D81B8A] transition group">
+                <span class="inline-flex items-center gap-1.5 shrink-0 min-w-[105px]">
+                  <svg class="w-6 h-6 shrink-0" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 12 60 C 25 48, 34 32, 50 32 C 60 32, 66 39, 73 43 C 71 38, 66 33, 66 24 C 66 10, 77 4, 89 4 C 103 4, 112 15, 112 31 C 112 45, 104 56, 94 60 C 104 64, 112 75, 112 89 C 112 105, 103 116, 89 116 C 77 116, 66 110, 66 96 C 66 87, 71 82, 73 77 C 66 81, 60 88, 50 88 C 34 88, 25 72, 12 60 Z" fill="#FFC700" />
+                    <path d="M 20 60 C 31 50, 38 38, 51 38 C 62 38, 71 51, 84 51 C 92 51, 97 44, 97 36 C 97 29, 92 24, 86 24 C 80 24, 76 28, 76 34 C 76 36, 77 38, 78 39 C 74 37, 71 32, 71 25 C 71 15, 79 9, 89 9 C 100 9, 107 18, 107 31 C 107 46, 97 56, 84 56 C 69 56, 60 44, 50 44 C 41 44, 36 51, 36 60 C 36 69, 41 76, 50 76 C 60 76, 69 64, 84 64 C 97 64, 107 74, 107 89 C 107 102, 100 111, 89 111 C 79 111, 71 105, 71 95 C 71 88, 74 83, 78 81 C 77 82, 76 84, 76 86 C 76 92, 80 96, 86 96 C 92 96, 97 91, 97 84 C 97 76, 92 69, 84 69 C 71 69, 62 82, 51 82 C 38 82, 31 70, 20 60 Z" fill="#210657" />
+                    <path d="M 41 60 C 41 52, 47 48, 53 48 C 59 48, 65 55, 72 60 C 65 65, 59 72, 53 72 C 47 72, 41 68, 41 60 Z" fill="#E6007E" />
+                  </svg>
+                  <span class="font-thai-serif font-bold text-sm text-[#210657] tracking-wider">THAI</span>
+                </span>
+                <span class="group-hover:underline">thaiairways.com</span>
+              </a>
+
+              <a href="https://www.thaicatering.com/" target="_blank" rel="noopener noreferrer"
+                class="inline-flex items-center gap-3 text-xs sm:text-sm font-medium text-[#3B0054] hover:text-[#D81B8A] transition group">
+                <span class="inline-flex items-center gap-1.5 shrink-0 min-w-[105px]">
+                  <svg class="w-6 h-6 shrink-0" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 12 60 C 25 48, 34 32, 50 32 C 60 32, 66 39, 73 43 C 71 38, 66 33, 66 24 C 66 10, 77 4, 89 4 C 103 4, 112 15, 112 31 C 112 45, 104 56, 94 60 C 104 64, 112 75, 112 89 C 112 105, 103 116, 89 116 C 77 116, 66 110, 66 96 C 66 87, 71 82, 73 77 C 66 81, 60 88, 50 88 C 34 88, 25 72, 12 60 Z" fill="#FFC700" />
+                    <path d="M 20 60 C 31 50, 38 38, 51 38 C 62 38, 71 51, 84 51 C 92 51, 97 44, 97 36 C 97 29, 92 24, 86 24 C 80 24, 76 28, 76 34 C 76 36, 77 38, 78 39 C 74 37, 71 32, 71 25 C 71 15, 79 9, 89 9 C 100 9, 107 18, 107 31 C 107 46, 97 56, 84 56 C 69 56, 60 44, 50 44 C 41 44, 36 51, 36 60 C 36 69, 41 76, 50 76 C 60 76, 69 64, 84 64 C 97 64, 107 74, 107 89 C 107 102, 100 111, 89 111 C 79 111, 71 105, 71 95 C 71 88, 74 83, 78 81 C 77 82, 76 84, 76 86 C 76 92, 80 96, 86 96 C 92 96, 97 91, 97 84 C 97 76, 92 69, 84 69 C 71 69, 62 82, 51 82 C 38 82, 31 70, 20 60 Z" fill="#210657" />
+                    <path d="M 41 60 C 41 52, 47 48, 53 48 C 59 48, 65 55, 72 60 C 65 65, 59 72, 53 72 C 47 72, 41 68, 41 60 Z" fill="#E6007E" />
+                  </svg>
+                  <span class="flex flex-col leading-none font-thai-serif text-[#210657]">
+                    <span class="font-bold text-xs tracking-wider">THAI</span>
+                    <span class="font-semibold text-[8px] tracking-widest mt-0.5">CATERING</span>
+                  </span>
+                </span>
+                <span class="group-hover:underline">thaicatering.com</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="border-t border-slate-200 mt-10 pt-5 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
+        <div>คลังสินค้าภายในประเทศ ท่าอากาศยานสุวรรณภูมิ (BANGKOK DOMESTIC TERMINAL)</div>
+        <div>Copyright © Thai Airways International Public Company Limited</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 7. ปุ่มลอยเลื่อนขึ้นบนสุด -->
+  <button id="backToTopBtn" onclick="scrollToTop()" title="กลับขึ้นด้านบนสุด" aria-label="กลับขึ้นด้านบนสุด"
+    class="fixed bottom-5 right-5 z-50 w-12 h-12 rounded-full bg-[#3B0054] hover:bg-[#D81B8A] text-white shadow-lg border-2 border-white flex items-center justify-center cursor-pointer transition-colors">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+    </svg>
+  </button>
+
+  <script>
+    let allFlights = [];
+    let currentDestFilter = 'ALL';
+
+    // ข้อมูลแผนที่และที่อยู่คลังสินค้า 9 สถานี
+    const STATION_DETAILS = {
+      BKK: {
+        title: 'Bangkok : Walk in Customer (Thailand Only) ภายในประเทศ',
+        badge: 'คลังสินค้าภายในประเทศ ท่าอากาศยานสุวรรณภูมิ (BKK)',
+        address: 'Thai Airways International Public Company Limited Domestic Cargo Building,<br>Suvarnabhumi Airport 333/1 Moo 7, Rachathewa, Bangphli, Samut Prakarn 10540',
+        telHtml: `
+          <div>- ส่งสินค้า (Cargo Acceptance) Tel : <span class="font-bold text-[#210657]">02-137-4521, 02-137-4524-25</span> (04:00 - 19:00 น.)</div>
+          <div>- รับฝากสินค้า (Cargo Acceptance) Tel : <span class="font-bold text-[#210657]">02-137-4523</span> (04:00 - 19:00 น.)</div>
+          <div>- รับสินค้าขาเข้า (Cargo Delivery) Tel : <span class="font-bold text-[#210657]">02-137-4516-18</span> (07:00 - 24:00 น.)</div>
+        `,
+        showEmail: true,
+        embedUrl: 'https://maps.google.com/maps?q=Thai%20Airways%20Domestic%20Cargo%20Terminal%20Suvarnabhumi%20Airport&t=&z=15&ie=UTF8&iwloc=&output=embed',
+        mapLink: 'https://maps.google.com/?q=Thai+Airways+Domestic+Cargo+Terminal+Suvarnabhumi+Airport'
+      },
+      CNX: {
+        title: 'Chiang Mai (CNX) : อาคารคลังสินค้าการบินไทย ท่าอากาศยานเชียงใหม่',
+        badge: 'สถานีเชียงใหม่ (CNX) - TG Cargo',
+        address: 'อาคารคลังสินค้า ท่าอากาศยานนานาชาติเชียงใหม่ เลขที่ 60 ถนนมหิดล ตำบลสุเทพ อำเภอเมืองเชียงใหม่ จังหวัดเชียงใหม่ 50200',
+        telHtml: `<div>- คลังสินค้าเชียงใหม่ (TG Cargo) Tel : <span class="font-bold text-[#210657]">053-277-439</span> (เปิดทำการทุกวัน 07:00 - 22:00 น.)</div>`,
+        showEmail: false,
+        embedUrl: 'https://maps.google.com/maps?q=Chiang%20Mai%20International%20Airport%20Cargo%20Terminal&t=&z=15&ie=UTF8&iwloc=&output=embed',
+        mapLink: 'https://maps.google.com/?q=Chiang+Mai+International+Airport+Cargo+Terminal'
+      },
+      CEI: {
+        title: 'Chiang Rai (CEI) : คลังสินค้า ท่าอากาศยานแม่ฟ้าหลวง เชียงราย',
+        badge: 'สถานีเชียงราย (CEI) - AVINDUS',
+        address: 'อาคารคลังสินค้า ท่าอากาศยานแม่ฟ้าหลวง เชียงราย เลขที่ 404 หมู่ 10 ตำบลบ้านดู่ อำเภอเมืองเชียงราย จังหวัดเชียงราย 57100',
+        telHtml: `<div>- ตัวแทนคลังสินค้า (AVINDUS) Tel : <span class="font-bold text-[#210657]">061-729-1852, 053-798-221</span> (เปิดทำการทุกวัน 06:00 - 20:00 น.)</div>`,
+        showEmail: false,
+        embedUrl: 'https://maps.google.com/maps?q=Mae%20Fah%20Luang%20Chiang%20Rai%20International%20Airport&t=&z=15&ie=UTF8&iwloc=&output=embed',
+        mapLink: 'https://maps.google.com/?q=Mae+Fah+Luang+Chiang+Rai+International+Airport'
+      },
+      UBP: {
+        title: 'Ubon Ratchathani (UBP) : คลังสินค้า ท่าอากาศยานนานาชาติอุบลราชธานี',
+        badge: 'สถานีอุบลราชธานี (UBP) - AVINDUS',
+        address: 'อาคารคลังสินค้า ท่าอากาศยานนานาชาติอุบลราชธานี ถนนเทพโยธี ตำบลในเมือง อำเภอเมืองอุบลราชธานี จังหวัดอุบลราชธานี 34000',
+        telHtml: `<div>- ตัวแทนคลังสินค้า (AVINDUS) Tel : <span class="font-bold text-[#210657]">063-345-4766, 093-358-5896</span> (เปิดทำการทุกวัน 06:00 - 18:00 น.)</div>`,
+        showEmail: false,
+        embedUrl: 'https://maps.google.com/maps?q=Ubon%20Ratchathani%20Airport&t=&z=15&ie=UTF8&iwloc=&output=embed',
+        mapLink: 'https://maps.google.com/?q=Ubon+Ratchathani+Airport'
+      },
+      UTH: {
+        title: 'Udon Thani (UTH) : คลังสินค้า ท่าอากาศยานนานาชาติอุดรธานี',
+        badge: 'สถานีอุดรธานี (UTH) - AVINDUS',
+        address: 'อาคารคลังสินค้า ท่าอากาศยานนานาชาติอุดรธานี เลขที่ 224 หมู่ 11 ตำบลหมากแข้ง อำเภอเมืองอุดรธานี จังหวัดอุดรธานี 41000',
+        telHtml: `<div>- ตัวแทนคลังสินค้า (AVINDUS) Tel : <span class="font-bold text-[#210657]">096-387-1132</span> (เปิดทำการทุกวัน 06:00 - 20:00 น.)</div>`,
+        showEmail: false,
+        embedUrl: 'https://maps.google.com/maps?q=Udon%20Thani%20International%20Airport&t=&z=15&ie=UTF8&iwloc=&output=embed',
+        mapLink: 'https://maps.google.com/?q=Udon+Thani+International+Airport'
+      },
+      KKC: {
+        title: 'Khon Kaen (KKC) : คลังสินค้า ท่าอากาศยานนานาชาติขอนแก่น',
+        badge: 'สถานีขอนแก่น (KKC) - AVINDUS',
+        address: 'อาคารคลังสินค้า ท่าอากาศยานนานาชาติขอนแก่น ตำบลบ้านเป็ด อำเภอเมืองขอนแก่น จังหวัดขอนแก่น 40000',
+        telHtml: `<div>- ตัวแทนคลังสินค้า (AVINDUS) Tel : <span class="font-bold text-[#210657]">086-490-1644, 043-334-387</span> (เปิดทำการทุกวัน 08:30 - 19:00 น.)</div>`,
+        showEmail: false,
+        embedUrl: 'https://maps.google.com/maps?q=Khon%20Kaen%20International%20Airport&t=&z=15&ie=UTF8&iwloc=&output=embed',
+        mapLink: 'https://maps.google.com/?q=Khon+Kaen+International+Airport'
+      },
+      HKT: {
+        title: 'Phuket (HKT) : อาคารคลังสินค้า ท่าอากาศยานนานาชาติภูเก็ต',
+        badge: 'สถานีภูเก็ต (HKT) - AOTGA',
+        address: 'อาคารคลังสินค้า ท่าอากาศยานนานาชาติภูเก็ต เลขที่ 222 หมู่ 6 ตำบลไม้ขาว อำเภอถลาง จังหวัดภูเก็ต 83110',
+        telHtml: `<div>- ผู้ให้บริการคลังสินค้า (AOTGA) Tel : <span class="font-bold text-[#210657]">076-351-355, 084-202-3374</span> (เปิดทำการทุกวัน 07:00 - 22:00 น.)</div>`,
+        showEmail: false,
+        embedUrl: 'https://maps.google.com/maps?q=Phuket%20International%20Airport%20Cargo%20Terminal&t=&z=15&ie=UTF8&iwloc=&output=embed',
+        mapLink: 'https://maps.google.com/?q=Phuket+International+Airport+Cargo+Terminal'
+      },
+      HDY: {
+        title: 'Hat Yai (HDY) : คลังสินค้า ท่าอากาศยานนานาชาติหาดใหญ่',
+        badge: 'สถานีหาดใหญ่ (HDY) - AVINDUS',
+        address: 'อาคารคลังสินค้า ท่าอากาศยานนานาชาติหาดใหญ่ เลขที่ 99 หมู่ 3 ตำบลคลองหลา อำเภอคลองหอยโข่ง จังหวัดสงขลา 90115',
+        telHtml: `<div>- ตัวแทนคลังสินค้า (AVINDUS) Tel : <span class="font-bold text-[#210657]">063-345-4765</span> (เปิดทำการทุกวัน 06:00 - 21:00 น.)</div>`,
+        showEmail: false,
+        embedUrl: 'https://maps.google.com/maps?q=Hat%20Yai%20International%20Airport&t=&z=15&ie=UTF8&iwloc=&output=embed',
+        mapLink: 'https://maps.google.com/?q=Hat+Yai+International+Airport'
+      },
+      KBV: {
+        title: 'Krabi (KBV) : คลังสินค้า ท่าอากาศยานนานาชาติกระบี่',
+        badge: 'สถานีกระบี่ (KBV) - AVINDUS',
+        address: 'อาคารคลังสินค้า ท่าอากาศยานนานาชาติกระบี่ เลขที่ 133 หมู่ 5 ถนนเพชรเกษม ตำบลเหนือคลอง อำเภอเหนือคลอง จังหวัดกระบี่ 81130',
+        telHtml: `<div>- ตัวแทนคลังสินค้า (AVINDUS) Tel : <span class="font-bold text-[#210657]">092-902-1038, 063-341-5562</span> (เปิดทำการทุกวัน 07:00 - 21:00 น.)</div>`,
+        showEmail: false,
+        embedUrl: 'https://maps.google.com/maps?q=Krabi%20International%20Airport&t=&z=15&ie=UTF8&iwloc=&output=embed',
+        mapLink: 'https://maps.google.com/?q=Krabi+International+Airport'
+      }
+    };
+
+    function selectStation(code) {
+      const info = STATION_DETAILS[code] || STATION_DETAILS.BKK;
+      document.getElementById('stationTitle').textContent = info.title;
+      document.getElementById('stationBadge').textContent = info.badge;
+      document.getElementById('stationAddress').innerHTML = info.address;
+      document.getElementById('stationTel').innerHTML = info.telHtml;
+      document.getElementById('stationMapFrame').src = info.embedUrl;
+      document.getElementById('stationMapLink').href = info.mapLink;
+
+      const emailRow = document.getElementById('stationEmailRow');
+      if (emailRow) {
+        if (info.showEmail) {
+          emailRow.classList.remove('hidden');
+        } else {
+          emailRow.classList.add('hidden');
+        }
+      }
+
+      document.querySelectorAll('.station-row').forEach(tr => {
+        if (tr.dataset.station === code) {
+          tr.classList.add('bg-purple-50/70');
+        } else {
+          tr.classList.remove('bg-purple-50/70');
+        }
+      });
+
+      const card = document.getElementById('stationMapCard');
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function toggleFaq(btn) {
+      const item = btn.parentElement;
+      const answer = item.querySelector('.faq-answer');
+      const chevron = btn.querySelector('.faq-chevron');
+      const badge = btn.querySelector('span');
+      const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+
+      if (isExpanded) {
+        btn.setAttribute('aria-expanded', 'false');
+        btn.classList.remove('bg-purple-50/40');
+        btn.classList.add('bg-white');
+        answer.classList.add('hidden');
+        chevron.classList.remove('rotate-180', 'text-[#D81B8A]');
+        chevron.classList.add('text-[#3B0054]');
+        if (badge) {
+          badge.classList.remove('bg-[#3B0054]', 'text-white');
+          badge.classList.add('bg-purple-100', 'text-[#3B0054]');
+        }
+      } else {
+        btn.setAttribute('aria-expanded', 'true');
+        btn.classList.add('bg-purple-50/40');
+        btn.classList.remove('bg-white');
+        answer.classList.remove('hidden');
+        chevron.classList.add('rotate-180', 'text-[#D81B8A]');
+        chevron.classList.remove('text-[#3B0054]');
+        if (badge) {
+          badge.classList.add('bg-[#3B0054]', 'text-white');
+          badge.classList.remove('bg-purple-100', 'text-[#3B0054]');
+        }
+      }
+    }
+
+    // ตารางเที่ยวบินขาเข้า 36 เที่ยวบิน (เฉพาะ FLIGHT, STA, ROUTING)
+    const INBOUND_FLIGHTS = [
+      { flight: 'TG 041', sta: '09:25', routing: 'KKC/BKK' },
+      { flight: 'TG 101', sta: '09:30', routing: 'CNX/BKK' },
+      { flight: 'TG 003', sta: '09:35', routing: 'UTH/BKK' },
+      { flight: 'TG 021', sta: '09:45', routing: 'UBP/BKK' },
+      { flight: 'TG 260', sta: '10:20', routing: 'HDY/BKK' },
+      { flight: 'TG 228', sta: '10:35', routing: 'HKT/BKK' },
+      { flight: 'TG 103', sta: '10:55', routing: 'CNX/BKK' },
+      { flight: 'TG 242', sta: '11:00', routing: 'KBV/BKK' },
+      { flight: 'TG 202', sta: '11:20', routing: 'HKT/BKK' },
+      { flight: 'TG 131', sta: '11:45', routing: 'CEI/BKK' },
+      { flight: 'TG 204', sta: '11:55', routing: 'HKT/BKK' },
+      { flight: 'TG 123', sta: '12:30', routing: 'CNX/BKK' },
+      { flight: 'TG 043', sta: '12:55', routing: 'KKC/BKK' },
+      { flight: 'TG 206', sta: '13:20', routing: 'HKT/BKK' },
+      { flight: 'TG 105', sta: '13:35', routing: 'CNX/BKK' },
+      { flight: 'TG 246', sta: '14:10', routing: 'KBV/BKK' },
+      { flight: 'TG 208', sta: '15:10', routing: 'HKT/BKK' },
+      { flight: 'TG 005', sta: '15:20', routing: 'UTH/BKK' },
+      { flight: 'TG 107', sta: '15:25', routing: 'CNX/BKK' },
+      { flight: 'TG 133', sta: '15:55', routing: 'CEI/BKK' },
+      { flight: 'TG 264', sta: '16:15', routing: 'HDY/BKK' },
+      { flight: 'TG 045', sta: '16:40', routing: 'KKC/BKK' },
+      { flight: 'TG 111', sta: '16:45', routing: 'CNX/BKK' },
+      { flight: 'TG 212', sta: '17:35', routing: 'HKT/BKK' },
+      { flight: 'TG 113', sta: '18:30', routing: 'CNX/BKK' },
+      { flight: 'TG 216', sta: '18:40', routing: 'HKT/BKK' },
+      { flight: 'TG 029', sta: '19:00', routing: 'UBP/BKK' },
+      { flight: 'TG 137', sta: '20:25', routing: 'CEI/BKK' },
+      { flight: 'TG 115', sta: '21:00', routing: 'CNX/BKK' },
+      { flight: 'TG 218', sta: '21:00', routing: 'HKT/BKK' },
+      { flight: 'TG 009', sta: '21:10', routing: 'UTH/BKK' },
+      { flight: 'TG 250', sta: '21:45', routing: 'KBV/BKK' },
+      { flight: 'TG 047', sta: '21:50', routing: 'KKC/BKK' },
+      { flight: 'TG 222', sta: '22:15', routing: 'HKT/BKK' },
+      { flight: 'TG 268', sta: '22:15', routing: 'HDY/BKK' },
+      { flight: 'TG 121', sta: '22:30', routing: 'CNX/BKK' }
+    ];
+
+    function renderInboundTable() {
+      const originFilter = (document.getElementById('inboundOriginFilter')?.value || 'ALL').toUpperCase();
+      const kw = (document.getElementById('inboundSearch')?.value || '').toLowerCase().trim();
+      const tbody = document.getElementById('inboundFlightBody');
+      if (!tbody) return;
+
+      const rows = INBOUND_FLIGHTS.filter(item => {
+        const origin = item.routing.split('/')[0];
+        const matchOrigin = (originFilter === 'ALL' || origin === originFilter);
+        const matchKw = (!kw || item.flight.toLowerCase().includes(kw) || item.routing.toLowerCase().includes(kw) || item.sta.includes(kw));
+        return matchOrigin && matchKw;
+      });
+
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-slate-500">ไม่พบข้อมูลเที่ยวบินขาเข้าที่ค้นหา</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows.map((item, idx) => {
+        const bg = idx % 2 === 1 ? 'bg-slate-50/70' : 'bg-white';
+        const routeArrow = item.routing.replace('/', ' ⮕ ');
+        return `<tr class="${bg} hover:bg-purple-50/60 transition">
+          <td class="p-2.5 border-r border-slate-200 font-prompt font-bold text-[#210657]">${item.flight}</td>
+          <td class="p-2.5 border-r border-slate-200 font-bold text-[#D81B8A]">${item.sta} น.</td>
+          <td class="p-2.5 font-semibold text-slate-700">${routeArrow}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    const RATES = {
+      CEI: { min: 120, n: 24, q45: 19, per: [10, 9, 8, 7], avi: [11, 10, 9], gcr: [12, 10, 9, 8] },
+      CNX: { min: 120, n: 20, q45: 16, per: [9, 8, 7, 7],  avi: [11, 10, 9], gcr: [12, 10, 9, 8] },
+      KKC: { min: 120, n: 15, q45: 11, per: [8, 7, 7, 7],  avi: [9, 8, 8],   gcr: [9, 8, 7, 7] },
+      UBP: { min: 120, n: 18, q45: 14, per: [9, 8, 7, 7],  avi: [10, 9, 9],  gcr: [10, 9, 8, 8] },
+      UTH: { min: 120, n: 17, q45: 13, per: [9, 8, 7, 7],  avi: [10, 9, 9],  gcr: [10, 9, 8, 8] },
+      HDY: { min: 120, n: 26, q45: 20, per: [11, 10, 9, 9],avi: [12, 11, 10],gcr: [13, 11, 10, 10] },
+      HKT: { min: 120, n: 24, q45: 19, per: [10, 9, 8, 8], avi: [11, 10, 9], gcr: [12, 10, 9, 8] },
+      KBV: { min: 120, n: 22, q45: 17, per: [9, 8, 7, 7],  avi: [10, 9, 9],  gcr: [10, 9, 8, 8] },
+      URT: { min: 120, n: 20, q45: 15, per: [9, 8, 7, 7],  avi: [10, 9, 9],  gcr: [10, 9, 8, 8] }
+    };
+
+    const VOL_TABLE_ROWS = [
+      [['0.001','0.16'],['2.2','365.20'],['6.1','1012.60']],
+      [['0.002','0.3'],['2.3','381.80'],['6.2','1029.20']],
+      [['0.003','0.5'],['2.4','398.40'],['6.3','1045.80']],
+      [['0.004','0.7'],['2.5','415.00'],['6.4','1062.40']],
+      [['0.005','0.8'],['2.6','431.60'],['6.5','1079.00']],
+      [['0.006','1.00'],['2.7','448.20'],['6.6','1095.60']],
+      [['0.007','1.20'],['2.8','464.80'],['6.7','1112.20']],
+      [['0.008','1.30'],['2.9','481.40'],['6.8','1128.80']],
+      [['0.009','1.50'],['3.0','498.00'],['6.9','1145.40']],
+      [['0.01','1.66'],['3.1','514.60'],['7.0','1162.00']],
+      [['0.02','3.30'],['3.2','531.20'],['7.1','1178.60']],
+      [['0.03','5.00'],['3.3','547.80'],['7.2','1195.20']],
+      [['0.04','6.60'],['3.4','564.40'],['7.3','1211.80']],
+      [['0.05','8.30'],['3.5','581.00'],['7.4','1228.40']],
+      [['0.06','10.00'],['3.6','597.20'],['7.5','1245.00']],
+      [['0.07','11.60'],['3.7','614.20'],['7.6','1261.60']],
+      [['0.08','13.30'],['3.8','630.80'],['7.7','1278.20']],
+      [['0.09','14.90'],['3.9','647.40'],['7.8','1294.80']],
+      [['0.1','16.60'],['4.0','664.00'],['7.9','1311.40']],
+      [['0.2','33.00'],['4.1','680.60'],['8.0','1328.00']],
+      [['0.3','50.00'],['4.2','697.20'],['8.1','1344.60']],
+      [['0.4','66.00'],['4.3','713.80'],['8.2','1361.20']],
+      [['0.5','83.00'],['4.4','730.40'],['8.3','1377.80']],
+      [['0.6','100.00'],['4.5','747.00'],['8.4','1394.40']],
+      [['0.7','133.00'],['4.6','763.60'],['8.5','1411.00']],
+      [['0.8','149.00'],['4.7','780.20'],['8.6','1427.60']],
+      [['0.9','166.00'],['4.8','796.80'],['8.7','1444.20']],
+      [['1.0','166.67'],['4.9','813.40'],['8.8','1460.80']],
+      [['1.1','182.60'],['5.0','830.00'],['9.0','1477.40']],
+      [['1.2','199.20'],['5.1','846.60'],['9.1','1510.60']],
+      [['1.3','215.80'],['5.2','863.20'],['9.2','1527.20']],
+      [['1.4','232.40'],['5.3','879.80'],['9.3','1543.80']],
+      [['1.5','249.00'],['5.4','896.40'],['9.4','1560.40']],
+      [['1.6','265.60'],['5.5','913.00'],['9.5','1577.00']],
+      [['1.7','282.20'],['5.6','929.60'],['9.6','1593.60']],
+      [['1.8','298.80'],['5.7','946.20'],['9.7','1610.20']],
+      [['1.9','315.40'],['5.8','962.80'],['9.8','1626.80']],
+      [['2.0','332.00'],['5.9','979.40'],['9.9','1643.40']],
+      [['2.1','348.60'],['6.0','996.00'],['10.0','1666.00']]
+    ];
+
+    function renderVolChart() {
+      const tbody = document.getElementById('volChartBody');
+      if (!tbody) return;
+      tbody.innerHTML = VOL_TABLE_ROWS.map((row, idx) => {
+        const bg = idx % 2 === 1 ? 'bg-slate-100' : 'bg-white';
+        return `<tr class="${bg}">
+          <td class="border border-slate-300 p-1 font-semibold text-slate-700">${row[0][0]}</td>
+          <td class="border border-slate-300 p-1 text-slate-900">${row[0][1]}</td>
+          <td class="border border-slate-300 p-1 font-semibold text-slate-700">${row[1][0]}</td>
+          <td class="border border-slate-300 p-1 text-slate-900">${row[1][1]}</td>
+          <td class="border border-slate-300 p-1 font-semibold text-slate-700">${row[2][0]}</td>
+          <td class="border border-slate-300 p-1 text-slate-900">${row[2][1]}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    function toggleVolChart() {
+      const box = document.getElementById('volChartBox');
+      box.classList.toggle('hidden');
+    }
+
+    function syncVolumetricWeight() {
+      const w = parseFloat(document.getElementById('calcW').value) || 0;
+      const l = parseFloat(document.getElementById('calcL').value) || 0;
+      const h = parseFloat(document.getElementById('calcH').value) || 0;
+      const volInput = document.getElementById('calcVolWeight');
+      if (w > 0 && l > 0 && h > 0) {
+        volInput.value = ((w * l * h) / 6000).toFixed(2);
+      } else {
+        volInput.value = '0';
+      }
+    }
+
+    window.addEventListener('scroll', function() {
+      const btn = document.getElementById('backToTopBtn');
+      if (window.scrollY > 300) {
+        btn.classList.add('show');
+      } else {
+        btn.classList.remove('show');
+      }
+    });
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchTabAndScroll(tab) {
+      switchTab(tab);
+      scrollToTop();
+    }
+
+    function getFlightRadarUrl(flightNo) {
+      const clean = String(flightNo || '').trim().toLowerCase().replace(/^tg0+/, 'tg');
+      return 'https://www.flightradar24.com/data/flights/' + clean;
+    }
+
+    function updateDateTime() {
+      const now = new Date();
+      const days = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+      const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      document.getElementById('liveDateTime').textContent =
+        `วัน${days[now.getDay()]}ที่ ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear() + 543} | ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} น.`;
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    function switchTab(tab) {
+      ['flights', 'calculator', 'guidelines', 'inbound', 'contact'].forEach(t => {
+        document.getElementById('sec-' + t).classList.add('hidden');
+        const pill = document.getElementById('pill-' + t);
+        pill.classList.remove('bg-white/20', 'text-white');
+        pill.classList.add('text-white/90');
+      });
+      document.getElementById('sec-' + tab).classList.remove('hidden');
+      const activePill = document.getElementById('pill-' + tab);
+      activePill.classList.add('bg-white/20', 'text-white');
+      activePill.classList.remove('text-white/90');
+    }
+
+    function loadData() {
+      document.getElementById('flightContainer').innerHTML =
+        `<div class="col-span-full bg-white rounded-xl border border-slate-200 p-10 text-center text-slate-500 text-sm">กำลังโหลดข้อมูลเที่ยวบินล่าสุด...</div>`;
+      google.script.run
+        .withSuccessHandler(res => {
+          allFlights = (res && res.flights) ? res.flights : [];
+          if (res && res.notice) document.getElementById('noticeText').textContent = res.notice;
+          updatePillCounts();
+          filterFlights();
+        })
+        .withFailureHandler(err => {
+          document.getElementById('flightContainer').innerHTML =
+            `<div class="col-span-full bg-white rounded-xl border border-rose-200 p-8 text-center text-rose-700 text-sm">ไม่สามารถดึงข้อมูลได้: ${err.message || ''}</div>`;
+        })
+        .getPublicData();
+    }
+
+    function updatePillCounts() {
+      const counts = { ALL: allFlights.length };
+      allFlights.forEach(f => {
+        counts[f.destCode] = (counts[f.destCode] || 0) + 1;
+      });
+      const labels = {
+        ALL: 'ทั้งหมด', CNX: 'เชียงใหม่ (CNX)', CEI: 'เชียงราย (CEI)', KKC: 'ขอนแก่น (KKC)',
+        UBP: 'อุบลฯ (UBP)', UTH: 'อุดรฯ (UTH)', HKT: 'ภูเก็ต (HKT)', HDY: 'หาดใหญ่ (HDY)', KBV: 'กระบี่ (KBV)'
+      };
+      document.querySelectorAll('.dest-pill').forEach(btn => {
+        const code = btn.dataset.dest;
+        btn.textContent = `${labels[code]} (${counts[code] || 0})`;
+      });
+    }
+
+    function setDestFilter(dest) {
+      currentDestFilter = dest;
+      document.querySelectorAll('.dest-pill').forEach(btn => {
+        if (btn.dataset.dest === dest) {
+          btn.className = 'dest-pill bg-[#3B0054] text-white border border-[#3B0054] px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition cursor-pointer';
+        } else {
+          btn.className = 'dest-pill bg-slate-100 hover:bg-purple-50 text-slate-700 border border-slate-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition cursor-pointer';
+        }
+      });
+      filterFlights();
+    }
+
+    function filterFlights() {
+      const kw = document.getElementById('searchInput').value.toLowerCase().trim();
+      const filtered = allFlights.filter(f =>
+        (currentDestFilter === 'ALL' || f.destCode === currentDestFilter) &&
+        (!kw || f.flightNo.toLowerCase().includes(kw) || f.destName.includes(kw) || f.destCode.toLowerCase().includes(kw))
+      );
+
+      const sorted = [...filtered].sort((a, b) => a.depTime.localeCompare(b.depTime));
+
+      const container = document.getElementById('flightContainer');
+      if (!sorted.length) {
+        container.innerHTML = `<div class="col-span-full bg-white rounded-xl border border-slate-200 p-10 text-center text-slate-500 text-sm">ไม่พบเที่ยวบินที่ค้นหา</div>`;
+        return;
+      }
+
+      container.innerHTML = sorted.map(f => {
+        const hasAlert = (f.flightAlert && f.flightAlert !== 'ปกติ');
+        const isOpen = (f.effectiveStatus === 'เปิดรับฝาก');
+        const cardClass = hasAlert ? 'is-alert' : (isOpen ? '' : 'is-closed');
+        const fr24Url = getFlightRadarUrl(f.flightNo);
+
+        let badgeHtml = '';
+        if (hasAlert) {
+          badgeHtml = `<span class="bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-bold shrink-0 shadow-xs">⚠️ ${f.flightAlert}</span>`;
+        } else if (isOpen) {
+          badgeHtml = `<span class="bg-[#DCFCE7] text-[#166534] border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold shrink-0">● เปิดรับฝาก</span>`;
+        } else {
+          badgeHtml = `<span class="bg-[#FEE2E2] text-[#991B1B] border border-rose-200 px-3 py-1 rounded-full text-xs font-bold shrink-0">● ปิดรับฝาก</span>`;
+        }
+
+        return `
+          <article class="vcb-card ${cardClass}">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="font-prompt text-base sm:text-lg font-bold text-[#240046]">${f.flightNo} → ${f.destCode}</span>
+                <span class="bg-purple-50 text-[#3B0054] border border-purple-200/70 text-xs font-semibold px-2.5 py-0.5 rounded-full">${f.destName}</span>
+                <a href="${fr24Url}" target="_blank" rel="noopener noreferrer" title="ตรวจสอบสถานะเครื่องบินบน Flightradar24"
+                  class="bg-slate-100 hover:bg-amber-100 text-slate-700 hover:text-amber-900 border border-slate-200 text-[11px] font-semibold px-2 py-0.5 rounded-md transition inline-flex items-center gap-1">
+                  <span>Radar ↗</span>
+                </a>
+              </div>
+              ${badgeHtml}
+            </div>
+
+            <div class="mt-3 bg-white/80 border border-slate-100 rounded-xl p-2.5 grid grid-cols-3 gap-2 text-xs">
+              <div>
+                <div class="text-slate-500 text-[11px]">ปิดรับฝาก (CLOSE)</div>
+                <div class="font-bold text-sm mt-0.5 text-[#D81B8A]">${f.cutOffTime} น.</div>
+              </div>
+              <div>
+                <div class="text-slate-500 text-[11px]">เครื่องออก (STD)</div>
+                <div class="font-bold text-sm text-slate-800 mt-0.5">${f.depTime} น.</div>
+              </div>
+              <div>
+                <div class="text-slate-500 text-[11px]">ถึงปลายทาง (STA)</div>
+                <div class="font-bold text-sm text-slate-800 mt-0.5">${f.arrTime} น.</div>
+              </div>
+            </div>
+
+            ${hasAlert ? `
+              <div class="mt-3 bg-amber-100/90 border border-amber-300 rounded-lg p-2.5 text-xs text-amber-950 font-medium leading-relaxed">
+                <strong>แจ้งเตือนสถานะเที่ยวบิน (${f.flightAlert}):</strong> ${f.alertNote || 'เที่ยวบินมีการเปลี่ยนแปลงเวลา กรุณาตรวจสอบข้อมูลก่อนนำส่งสินค้า'}
+              </div>
+            ` : ''}
+
+            ${(!isOpen && !hasAlert) ? `
+              <div class="mt-3 text-xs text-[#991B1B] font-medium">
+                ปิดรับฝากสินค้าสำหรับเที่ยวบินนี้แล้ว ลูกค้าสามารถพิจารณาใช้เที่ยวบินถัดไปได้
+              </div>
+            ` : ''}
+          </article>
+        `;
+      }).join('');
+    }
+
+    function calculateRate() {
+      const dest = document.getElementById('calcDest').value;
+      const type = document.getElementById('calcType').value;
+      const actualW = parseFloat(document.getElementById('calcWeight').value) || 0;
+      const volW = parseFloat(document.getElementById('calcVolWeight').value) || 0;
+      const hasWht = document.getElementById('calcWht').checked;
+
+      const cw = Math.max(actualW, volW);
+      const r = RATES[dest];
+
+      let ratePerKg = r.n, rateLabel = 'อัตราปกติ (Normal Rate)';
+      if (cw >= 100) {
+        const idx = cw >= 1000 ? 3 : (cw >= 500 ? 2 : (cw >= 250 ? 1 : 0));
+        if (type === 'PER') { ratePerKg = r.per[idx]; rateLabel = 'อัตราของสด/ผลไม้ (100+ กก.)'; }
+        else if (type === 'AVI') { ratePerKg = r.avi[Math.min(idx, 2)]; rateLabel = 'อัตราสัตว์น้ำมีชีวิต (100+ กก.)'; }
+        else { ratePerKg = r.gcr[idx]; rateLabel = 'อัตราสินค้าทั่วไป (100+ กก.)'; }
+      } else if (cw >= 45) {
+        ratePerKg = r.q45; rateLabel = 'อัตรา Q45 (45-99.5 กก.)';
+      }
+
+      const freight = cw > 0 ? Math.max(r.min, cw * ratePerKg) : 0;
+      const terminal = cw <= 0 ? 0 : (cw <= 0.5 ? 30 : (cw <= 29.5 ? 40 : (cw <= 99.5 ? 50 : (cw <= 499.5 ? 100 : 200))));
+      const cartage = cw <= 0 ? 0 : (cw <= 10 ? 10 : Math.ceil(cw));
+      const awbFee = cw > 0 ? 20 : 0;
+      const fuel = cw > 0 ? Math.ceil(cw) : 0;
+      const subTotal = freight + terminal + cartage + awbFee + fuel;
+      const whtAmount = hasWht ? (freight * 0.01) : 0;
+      const netTotal = subTotal - whtAmount;
+
+      document.getElementById('calcResult').innerHTML = `
+        <div class="text-xs sm:text-sm text-slate-700 space-y-1.5">
+          <div class="flex justify-between"><span>ค่าระวางขนส่ง (${rateLabel} @ ${ratePerKg} บ./กก.):</span><span class="font-medium">${freight.toFixed(2)} บาท</span></div>
+          <div class="flex justify-between"><span>ค่าบริการคลังสินค้า (Terminal Charge):</span><span class="font-medium">${terminal.toFixed(2)} บาท</span></div>
+          <div class="flex justify-between"><span>ค่าธรรมเนียมยกขน (Cartage Charge):</span><span class="font-medium">${cartage.toFixed(2)} บาท</span></div>
+          <div class="flex justify-between"><span>ค่าธรรมเนียมเอกสาร (AWB Fee):</span><span class="font-medium">${awbFee.toFixed(2)} บาท</span></div>
+          <div class="flex justify-between"><span>ค่าชดเชยน้ำมันเชื้อเพลิง (Fuel Surcharge):</span><span class="font-medium">${fuel.toFixed(2)} บาท</span></div>
+          ${hasWht ? `
+            <div class="flex justify-between text-rose-700 font-medium pt-1 border-t border-purple-200/70">
+              <span>หักภาษี ณ ที่จ่าย 1% (Withholding Tax 1% จากค่าระวาง):</span>
+              <span>-${whtAmount.toFixed(2)} บาท</span>
+            </div>
+          ` : ''}
+        </div>
+        <div class="flex justify-between items-center border-t border-purple-300 pt-2.5 mt-2">
+          <span class="font-prompt font-bold text-sm text-[#2E0057]">${hasWht ? 'ยอดสุทธิที่ต้องชำระจริง:' : 'ยอดรวมประมาณการทั้งสิ้น:'}</span>
+          <span class="font-prompt font-bold text-lg text-[#D81B8A]">${netTotal.toLocaleString('th-TH', { minimumFractionDigits: 2 })} บาท</span>
+        </div>
+      `;
+    }
+
+    window.onload = function() {
+      loadData();
+      renderVolChart();
+      renderInboundTable();
+      calculateRate();
+    };
+  </script>
+</body>
+</html>
